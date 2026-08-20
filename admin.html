@@ -487,6 +487,15 @@ async function editarCampanha(id){
       '<input type="file" id="ce-file" accept="image/*" multiple style="display:none" onchange="subirImagensCarrossel(this)">'+
       '<div class="thumb-grid" id="ce-thumbs"></div>'+
     '</div>'+
+    '<div style="border-top:1px solid var(--line);margin:16px 0 4px;padding-top:14px"><div style="display:flex;align-items:center;justify-content:space-between"><b style="font-size:13.5px">Order bump (oferta pós-pagamento)</b><label class="toggle"><input type="checkbox" id="ce-bump" '+(c.bump_ativo?'checked':'')+'><span class="sl"></span></label></div>'+
+      '<div class="help" style="margin:6px 0 12px">Depois que a pessoa paga as cotas selecionadas, aparece uma oferta pra levar mais cotas com desconto. A pessoa aceita com 1 clique e paga só o extra.</div>'+
+      '<div class="formgrid">'+
+        campo('Cotas extras na oferta','ce-bumpqtd','number',f('',c.bump_qtd))+
+        campo('Desconto (%)','ce-bumpdesc','number',f('',c.bump_desconto))+
+        campo('Título da oferta','ce-bumptit','text',f('',c.bump_titulo),'col-full')+
+        '<div class="col-full field"><label>Texto da oferta (opcional)</label><textarea id="ce-bumptxt" rows="2" placeholder="Ex.: Última chance de dobrar suas chances com desconto!">'+esc(f('',c.bump_texto))+'</textarea></div>'+
+      '</div>'+
+    '</div>'+
     '<div style="display:flex;gap:10px;margin-top:18px"><button class="btn green full" onclick="salvarCampanha(\''+(id||'')+'\')"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></span> Salvar campanha</button><button class="btn ghost" onclick="fecharModal()">Cancelar</button></div>');
   renderThumbs();
 }
@@ -517,6 +526,9 @@ async function salvarCampanha(id){
     ranking_inicio:g('ce-rkini')||'',ranking_fim:g('ce-rkfim')||'',
     meta_arrecadacao:g('ce-meta')||'',sorteio_ref:g('ce-sorteio'),
     progresso_min:g('ce-progmin')||'',
+    bump_ativo:$('ce-bump')?$('ce-bump').checked:false,
+    bump_qtd:g('ce-bumpqtd')||'',bump_desconto:g('ce-bumpdesc')||'',
+    bump_titulo:g('ce-bumptit'),bump_texto:g('ce-bumptxt'),
     imagens:S.imgsEdit||[]
   };
   if(id)p.id=id;
