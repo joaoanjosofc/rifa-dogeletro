@@ -479,6 +479,8 @@ async function editarCampanha(id){
     campo('Ranking — fim','ce-rkfim','datetime-local',dtl(c.ranking_fim))+
     campo('Meta de arrecadação (R$)','ce-meta','number',f('',c.meta_arrecadacao))+
     campo('Referência do sorteio','ce-sorteio','text',f('',c.sorteio_ref))+
+    campo('Progresso mínimo exibido (%)','ce-progmin','number',f('',c.progresso_min))+
+    '<div class="col-full help" style="margin-top:-4px">Deixe vazio para mostrar a % real de vendas. Se preencher (ex.: 90), a barra do site mostra no mínimo esse valor e sobe conforme as vendas reais passam disso.</div>'+
     '</div>'+
     '<div style="margin-top:16px"><label style="font-size:12px;font-weight:700;color:var(--txt2);display:block;margin-bottom:6px"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span> Imagens do carrossel</label>'+
       '<div class="dropzone" id="ce-drop" onclick="document.getElementById(\'ce-file\').click()">Clique para enviar fotos do prêmio (JPG/PNG, até 5MB cada)</div>'+
@@ -514,6 +516,7 @@ async function salvarCampanha(id){
     ranking_titulo:g('ce-rktit'),ranking_premio:g('ce-rkprem'),
     ranking_inicio:g('ce-rkini')||'',ranking_fim:g('ce-rkfim')||'',
     meta_arrecadacao:g('ce-meta')||'',sorteio_ref:g('ce-sorteio'),
+    progresso_min:g('ce-progmin')||'',
     imagens:S.imgsEdit||[]
   };
   if(id)p.id=id;
