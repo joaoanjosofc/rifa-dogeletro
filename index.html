@@ -18,8 +18,8 @@
 <style>
 :root{
   --red:#e5182c;
-  --red-dark:#b90f20;
-  --red-deep:#8c0a17;
+  --red-dark:color-mix(in srgb, var(--red), #000 22%);
+  --red-deep:color-mix(in srgb, var(--red), #000 40%);
   --green:#16a34a;
   --green-dark:#118a3e;
   --bar:#2fd35d;
@@ -97,7 +97,7 @@ header.topo{
 
 /* faixa de título sobre a imagem */
 .capa-info{position:absolute;left:0;right:0;bottom:0;z-index:2;background:linear-gradient(transparent,rgba(0,0,0,.62) 30%,rgba(0,0,0,.8));padding:38px 16px 12px}
-.tag-reta{display:inline-flex;align-items:center;gap:6px;background:var(--red);color:#fff;font-size:11.5px;font-weight:700;letter-spacing:.6px;padding:5px 12px;border-radius:999px;text-transform:uppercase;box-shadow:0 3px 10px rgba(229,24,44,.45)}
+.tag-reta{display:inline-flex;align-items:center;gap:6px;background:var(--red);color:#fff;font-size:11.5px;font-weight:700;letter-spacing:.6px;padding:5px 12px;border-radius:999px;text-transform:uppercase;box-shadow:0 3px 10px color-mix(in srgb, var(--red) 45%, transparent)}
 .capa-info h1{color:#fff;font-size:21px;font-weight:800;letter-spacing:.4px;margin-top:8px;text-transform:uppercase}
 .capa-info p{color:#e8e8ec;font-size:13.5px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
 
@@ -122,7 +122,7 @@ header.topo{
 .pacote .mais{font-size:23px;font-weight:800;color:var(--ink)}
 .pacote .valor{font-size:12px;color:var(--gray);font-weight:500;margin-top:1px}
 .pacote .sel{font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--gray);margin-top:8px;text-transform:uppercase}
-.pacote.destaque{background:var(--red);border-color:var(--red-dark);box-shadow:0 6px 18px rgba(229,24,44,.4)}
+.pacote.destaque{background:var(--red);border-color:var(--red-dark);box-shadow:0 6px 18px color-mix(in srgb, var(--red) 40%, transparent)}
 .pacote.destaque .mais,.pacote.destaque .valor,.pacote.destaque .sel{color:#fff}
 .pacote.destaque:hover{background:var(--red-dark)}
 .tag-popular{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--red);border:2px solid #fff;color:#fff;font-size:9.5px;font-weight:800;letter-spacing:1px;padding:3px 10px;border-radius:999px;white-space:nowrap;text-transform:uppercase;box-shadow:0 3px 8px rgba(0,0,0,.18)}
@@ -160,10 +160,10 @@ header.topo{
 .card-cab h2{font-size:21px;font-weight:800;color:var(--ink)}
 .card-cab h2 small{font-size:13px;font-weight:500;color:#9a9aa4;margin-left:5px}
 .card-cab .sub{font-size:12.5px;color:var(--gray);font-weight:500;margin-top:-2px}
-.badge-cont{position:absolute;top:14px;right:14px;background:var(--red);color:#fff;font-size:12.5px;font-weight:800;padding:4px 12px;border-radius:8px;box-shadow:0 3px 8px rgba(229,24,44,.35)}
+.badge-cont{position:absolute;top:14px;right:14px;background:var(--red);color:#fff;font-size:12.5px;font-weight:800;padding:4px 12px;border-radius:8px;box-shadow:0 3px 8px color-mix(in srgb, var(--red) 35%, transparent)}
 
 /* ---------- roletas ---------- */
-.rol-btn{width:100%;background:var(--red);border-radius:12px;display:flex;align-items:center;gap:14px;padding:11px 14px;color:#fff;margin-bottom:10px;transition:.18s;box-shadow:0 4px 12px rgba(229,24,44,.3);text-align:left}
+.rol-btn{width:100%;background:var(--red);border-radius:12px;display:flex;align-items:center;gap:14px;padding:11px 14px;color:#fff;margin-bottom:10px;transition:.18s;box-shadow:0 4px 12px color-mix(in srgb, var(--red) 30%, transparent);text-align:left}
 .rol-btn:hover{background:var(--red-dark);transform:translateY(-1px)}
 .rol-btn.borda{outline:2.5px solid var(--red-deep);outline-offset:-1px}
 .rol-btn .qtd{flex:none;text-align:center;padding-right:14px;border-right:1.5px solid rgba(255,255,255,.35);min-width:86px}
@@ -181,7 +181,7 @@ header.topo{
 .linha-premio .chip{background:#fff;border-radius:999px;font-size:13px;font-weight:800;padding:6px 13px;white-space:nowrap;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
 .linha-premio .resto{flex:1;text-align:right;font-size:13.5px;font-weight:600;color:#8b8b95;display:flex;align-items:center;justify-content:flex-end;gap:7px;min-width:0}
 .linha-premio .resto .nome{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.linha-premio.ganho{background:var(--red);box-shadow:0 3px 10px rgba(229,24,44,.3)}
+.linha-premio.ganho{background:var(--red);box-shadow:0 3px 10px color-mix(in srgb, var(--red) 30%, transparent)}
 .linha-premio.ganho .chip{color:var(--ink)}
 .linha-premio.ganho .resto{color:#fff;font-weight:600}
 .linha-premio .meio{font-size:13.5px;font-weight:700;color:var(--ink);white-space:nowrap;flex:1;text-align:center}
@@ -254,7 +254,7 @@ footer p.leg{font-size:11.5px;line-height:1.65;color:#84848e}
 .resumo .lin.total{font-weight:800;color:var(--ink);font-size:15px;border-top:1px solid var(--line);padding-top:7px;margin-top:3px}
 .btn-cheio{width:100%;margin-top:16px;background:linear-gradient(180deg,#19b355,var(--green-dark));color:#fff;font-size:15.5px;font-weight:800;padding:14px;border-radius:12px;box-shadow:0 6px 16px rgba(17,138,62,.4);transition:.18s}
 .btn-cheio:hover{filter:brightness(1.06)}
-.btn-cheio.vermelho{background:linear-gradient(180deg,var(--red),var(--red-dark));box-shadow:0 6px 16px rgba(229,24,44,.35)}
+.btn-cheio.vermelho{background:linear-gradient(180deg,var(--red),var(--red-dark));box-shadow:0 6px 16px color-mix(in srgb, var(--red) 35%, transparent)}
 .btn-cheio:disabled{filter:grayscale(.6);opacity:.6;cursor:not-allowed}
 .btn-fant{width:100%;margin-top:9px;color:var(--gray);font-weight:700;font-size:13.5px;padding:10px}
 .selo-demo{margin:14px auto 0;width:fit-content;background:#fff7e6;border:1.5px solid #f2d38c;color:#8a6410;font-size:11.5px;font-weight:700;padding:6px 13px;border-radius:999px;text-align:center}
@@ -262,7 +262,7 @@ footer p.leg{font-size:11.5px;line-height:1.65;color:#84848e}
 /* pix */
 .qr-box{margin:16px auto 0;width:210px;background:#fff;border:1.6px solid var(--line);border-radius:14px;padding:12px;position:relative}
 .qr-box .marca-agua{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
-.qr-box .marca-agua span{transform:rotate(-18deg);background:rgba(229,24,44,.92);color:#fff;font-size:12px;font-weight:800;letter-spacing:1.5px;padding:5px 14px;border-radius:6px}
+.qr-box .marca-agua span{transform:rotate(-18deg);background:color-mix(in srgb, var(--red) 92%, transparent);color:#fff;font-size:12px;font-weight:800;letter-spacing:1.5px;padding:5px 14px;border-radius:6px}
 .copia-cola{margin-top:13px;background:#f4f4f7;border:1.5px solid var(--line);border-radius:11px;padding:10px 12px;font-size:11px;color:#7a7a85;word-break:break-all;text-align:center;font-family:ui-monospace,monospace}
 .timer-pix{text-align:center;margin-top:12px;font-size:13px;color:var(--ink-soft);font-weight:600}
 .timer-pix b{color:var(--red);font-size:16px;font-variant-numeric:tabular-nums}
@@ -284,7 +284,7 @@ footer p.leg{font-size:11.5px;line-height:1.65;color:#84848e}
 .status-pill.expirado,.status-pill.cancelado{background:#f4f4f7;color:#7a7a85}
 .pedido-card .grade-nums{justify-content:flex-start;margin-top:10px}
 .pedido-card .num-chip{font-size:11.5px;padding:4px 9px}
-.btn-mini{margin-top:10px;background:linear-gradient(180deg,var(--red),var(--red-dark));color:#fff;font-size:12.5px;font-weight:800;padding:8px 14px;border-radius:9px;box-shadow:0 4px 10px rgba(229,24,44,.3)}
+.btn-mini{margin-top:10px;background:linear-gradient(180deg,var(--red),var(--red-dark));color:#fff;font-size:12.5px;font-weight:800;padding:8px 14px;border-radius:9px;box-shadow:0 4px 10px color-mix(in srgb, var(--red) 30%, transparent)}
 
 /* roleta modal */
 .roleta-wrap{position:relative;width:250px;height:250px;margin:18px auto 8px}
@@ -321,7 +321,7 @@ footer p.leg{font-size:11.5px;line-height:1.65;color:#84848e}
 @keyframes kenburns{from{transform:scale(1)}to{transform:scale(1.07)}}
 .capa-info h1{text-shadow:0 2px 12px rgba(0,0,0,.5)}
 .tag-reta{animation:pulseTag 2.4s ease-in-out infinite}
-@keyframes pulseTag{50%{box-shadow:0 3px 18px rgba(229,24,44,.75)}}
+@keyframes pulseTag{50%{box-shadow:0 3px 18px color-mix(in srgb, var(--red) 75%, transparent)}}
 
 .icn{display:inline-flex;align-items:center;justify-content:center;line-height:0;vertical-align:-0.16em}
 .icn>svg{width:1.08em;height:1.08em;display:block}
