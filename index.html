@@ -325,6 +325,30 @@ footer p.leg{font-size:11.5px;line-height:1.65;color:#84848e}
 
 .icn{display:inline-flex;align-items:center;justify-content:center;line-height:0;vertical-align:-0.16em}
 .icn>svg{width:1.08em;height:1.08em;display:block}
+
+/* ---------- checkout premium + order bump ---------- */
+.chk-steps{display:flex;align-items:center;justify-content:center;margin:2px 0 14px}
+.chk-steps .step{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:var(--gray)}
+.chk-steps .step .dot{width:22px;height:22px;border-radius:50%;background:#e7e7ec;color:#9a9aa4;display:grid;place-items:center;font-size:11px;font-weight:800;transition:.2s}
+.chk-steps .step.on{color:var(--ink)}
+.chk-steps .step.on .dot{background:var(--green-dark);color:#fff}
+.chk-steps .step.done .dot{background:var(--green);color:#fff}
+.chk-steps .sep{width:22px;height:2px;background:#e2e2e8;margin:0 7px}
+.chk-head{display:flex;align-items:center;gap:8px;justify-content:center;background:linear-gradient(180deg,#f2fdf6,#e9faf0);border:1px solid #c9edd6;border-radius:12px;padding:9px 12px;margin:8px 0 2px;color:var(--green-dark);font-weight:700;font-size:12.5px}
+.chk-head svg{width:17px;height:17px;flex:none}
+.trust-row{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:13px;padding-top:12px;border-top:1px solid var(--line)}
+.trust-row span{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--gray)}
+.trust-row span svg{width:14px;height:14px;stroke:var(--green-dark);flex:none}
+.bump-card{margin-top:16px;border:2px dashed var(--gold);background:linear-gradient(160deg,#fff8e6,#fff);border-radius:16px;padding:18px 16px 16px;text-align:center;position:relative;animation:pop .4s ease}
+.bump-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#ff7a00,#ff2d2d);color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.8px;padding:4px 14px;border-radius:999px;box-shadow:0 4px 12px rgba(255,60,45,.4);white-space:nowrap}
+.bump-off{display:inline-block;background:#e7f8ed;color:#0e7a37;font-size:11px;font-weight:800;padding:2px 10px;border-radius:999px;margin-bottom:4px}
+.bump-tit{font-size:16.5px;font-weight:800;color:var(--ink);margin-top:4px;line-height:1.25}
+.bump-txt{font-size:13px;color:var(--ink-soft);margin-top:5px;line-height:1.5}
+.bump-preco{margin:12px 0 2px;display:flex;align-items:baseline;justify-content:center;gap:10px}
+.bump-preco .de{font-size:14px;color:#b0b0b8;text-decoration:line-through}
+.bump-preco .por{font-size:27px;font-weight:900;color:var(--green-dark)}
+.btn-bump{width:100%;margin-top:10px;background:linear-gradient(180deg,#ffb62b,#f08a00);color:#3a2400;font-size:15px;font-weight:800;padding:14px;border-radius:12px;box-shadow:0 8px 20px rgba(240,138,0,.42);transition:.15s}
+.btn-bump:hover{filter:brightness(1.05);transform:translateY(-1px)}
 </style>
 </head>
 <body>
@@ -545,16 +569,29 @@ footer p.leg{font-size:11.5px;line-height:1.65;color:#84848e}
   <div class="modal-veu" id="modal-checkout" onclick="fecharSeVeu(event,'modal-checkout')">
     <div class="modal">
       <div class="alca"></div>
+      <div class="chk-steps" id="chk-steps">
+        <div class="step on" data-s="1"><span class="dot">1</span>Dados</div>
+        <div class="sep"></div>
+        <div class="step" data-s="2"><span class="dot">2</span>Pagamento</div>
+        <div class="sep"></div>
+        <div class="step" data-s="3"><span class="dot">3</span>Pronto</div>
+      </div>
 
       <!-- etapa 1: dados -->
       <div id="etapa-dados">
         <h3 id="chk-titulo">Garantir minha chance </h3>
         <p class="sub-m">Preencha seus dados para gerar o PIX</p>
+        <div class="chk-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Pagamento 100% seguro via PIX</div>
         <div class="campo"><label>Nome completo</label><input id="c-nome" type="text" placeholder="Seu nome"></div>
         <div class="campo"><label>Celular (WhatsApp)</label><input id="c-fone" type="tel" inputmode="numeric" placeholder="(00) 00000-0000" oninput="mascaraFone(this)"></div>
         <div class="resumo">
           <div class="lin"><span id="r-qtd">—</span><span id="r-unit">—</span></div>
           <div class="lin total"><span>Total</span><span id="r-total">—</span></div>
+        </div>
+        <div class="trust-row">
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Ambiente seguro</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 4 14 11 14 10 22 20 9 13 9"/></svg>PIX instantâneo</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.1V12a10 10 0 1 1-5.9-9.1"/><polyline points="22 4 12 14.1 9 11.1"/></svg>Confirmação automática</span>
         </div>
         <button class="btn-cheio" id="btn-gerar" onclick="gerarPix()">Gerar PIX <span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="currentColor" stroke="none"><path d="M12 2.5l5 5-5 5-5-5z"/><path d="M12 11.5l5 5-5 5-5-5z"/></svg></span></button>
         <button class="btn-fant" onclick="fecharModal('modal-checkout')">Cancelar</button>
@@ -579,7 +616,7 @@ footer p.leg{font-size:11.5px;line-height:1.65;color:#84848e}
 
       <!-- etapa 3: sucesso -->
       <div id="etapa-sucesso" style="display:none">
-        <div class="sucesso-ico"></div>
+        <div class="sucesso-ico"><svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="width:34px;height:34px"><path d="M20 6 9 17l-5-5"/></svg></div>
         <h3>Pagamento confirmado!</h3>
         <p class="sub-m" id="sucesso-sub">Boa sorte! Estes são seus números:</p>
         <div class="grade-nums" id="nums-gerados"></div>
@@ -713,6 +750,39 @@ function dataBR(iso, comHora){
   return dd + '/' + mm + '/' + d.getFullYear() + (comHora ? ' às ' + hh + ':' + mi : '');
 }
 
+/* ---------- Pixel do Facebook ---------- */
+var FB = { id: null, ready: false, fired: {} };
+function fbInit(pixelId){
+  if(FB.ready) return;
+  var id = String(pixelId || '').trim();
+  if(!id) return;
+  FB.id = id;
+  try{
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+      n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+    (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', FB.id);
+    fbq('track', 'PageView');
+    FB.ready = true;
+    console.log('[Pixel] iniciado ' + FB.id);
+  }catch(e){ console.log('[Pixel] erro ao iniciar', e); }
+}
+// evento: 'InitiateCheckout' (Pix gerado) ou 'Purchase' (Rifa paga)
+function fbTrack(evento, valor, pedidoId){
+  var params = { currency: 'BRL', value: Math.round((Number(valor) || 0) * 100) / 100 };
+  var key = evento + ':' + (pedidoId || '');
+  if(pedidoId){ if(FB.fired[key]) return; FB.fired[key] = true; }
+  var opts = pedidoId ? { eventID: evento.toLowerCase() + '_' + pedidoId } : undefined;
+  if(FB.ready && window.fbq){
+    try{ window.fbq('track', evento, params, opts); }catch(e){}
+    console.log('[Pixel] ' + evento, params, opts || '');
+  }else{
+    console.log('[Pixel:nao-enviado] ' + evento, params, '(sem pixel configurado ou modo demonstracao)');
+  }
+}
+
 /* ---------- carregamento ---------- */
 async function carregar(silencioso){
   if(FORCAR_EXEMPLO){ E.online = false; renderHome(EXEMPLO); $('badge-offline').classList.add('ver'); return; }
@@ -748,6 +818,10 @@ function renderHome(home){
   if(cfg.logo_url){ document.querySelectorAll('.logo').forEach(l => l.innerHTML = '<img src="' + esc(cfg.logo_url) + '" alt="' + esc(cfg.nome_site||'') + '" style="max-height:36px;max-width:180px;object-fit:contain">'); }
 
   document.title = (cfg.nome_site || 'RIFA PRIME') + ' · Sorteios e Prêmios';
+
+  // Pixel do Facebook da campanha (dispara PageView ao carregar)
+  if(c.fb_pixel_id){ fbInit(c.fb_pixel_id); }
+  else if(E.online && c.id){ api('rifa_get_pixel', { p_camp: c.id }).then(function(res){ if(res && res.pixel) fbInit(res.pixel); }).catch(function(){}); }
 
   // capa
   const tag = $('camp-tag');
@@ -932,6 +1006,7 @@ function prepCheckout(titulo, linhaQtd, linhaUnit, total){
   $('r-total').textContent = total;
   $('selo-dados').style.display = E.home?.config?.demo_mode ? '' : 'none';
   $('btn-gerar').disabled = false;
+  setStep(1);
   abrirModal('modal-checkout');
 }
 async function gerarPix(){
@@ -943,8 +1018,16 @@ async function gerarPix(){
   try{
     p = await api('rifa_criar_pedido', { p_campanha: E.camp.id, p_nome: nome, p_telefone: fone, p_qtd: E.chk.qtd, p_tipo: E.chk.tipo });
   }catch(err){ $('btn-gerar').disabled = false; toast(err.message); return; }
+  E.buyer = { nome: nome, fone: fone }; E.ehBump = false;
+  await mostrarPix(p);
+}
+async function mostrarPix(p){
   E.pedido = p;
+  setStep(2);
+  // Pixel: Pix gerado -> InitiateCheckout (só em pagamento real)
+  if(!p.demo_mode) fbTrack('InitiateCheckout', p.valor_total != null ? p.valor_total : (p.qtd * (E.camp ? E.camp.preco_unit : 0)), p.pedido_id);
   $('etapa-dados').style.display = 'none';
+  $('etapa-sucesso').style.display = 'none';
   $('etapa-pix').style.display = '';
   iniciarTimer(p.expira_em);
   if(p.demo_mode){
@@ -1014,6 +1097,10 @@ async function confirmarPagamento(){
   carregar(true);
 }
 function mostrarSucesso(r){
+  setStep(3);
+  // Pixel: Rifa paga -> Purchase (só em pagamento real, 1x por pedido)
+  if(E.pedido && !E.pedido.demo_mode) fbTrack('Purchase', E.pedido.valor_total != null ? E.pedido.valor_total : (E.pedido.qtd * (E.camp ? E.camp.preco_unit : 0)), E.pedido.pedido_id);
+  $('etapa-dados').style.display = 'none';
   $('etapa-pix').style.display = 'none';
   $('etapa-sucesso').style.display = '';
   const nums = r.numeros || [];
@@ -1028,7 +1115,36 @@ function mostrarSucesso(r){
   if(r.giros > 0){
     extras += '<button class="btn-cheio vermelho" onclick="fecharModal(\'modal-checkout\');abrirRoletaJogar(E.pedido.pedido_id,' + r.giros + ')"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="12" y1="3" x2="12" y2="21" stroke-width="1.4"/><line x1="3" y1="12" x2="21" y2="12" stroke-width="1.4"/><line x1="5.6" y1="5.6" x2="18.4" y2="18.4" stroke-width="1.4"/><line x1="18.4" y1="5.6" x2="5.6" y2="18.4" stroke-width="1.4"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/></svg></span> Girar minha' + (r.giros > 1 ? 's ' + r.giros + ' roletas' : ' roleta') + ' agora</button>';
   }
+  const c = E.camp;
+  if(c && c.bump_ativo && !E.ehBump){
+    const off = Math.round(Number(c.bump_desconto) || 0);
+    extras += '<div class="bump-card">' +
+      '<div class="bump-badge">OFERTA SÓ AGORA</div>' +
+      (off > 0 ? '<span class="bump-off">' + off + '% OFF</span>' : '') +
+      '<div class="bump-tit">' + esc(c.bump_titulo || ('Leve +' + c.bump_qtd + ' cotas com desconto!')) + '</div>' +
+      '<div class="bump-txt">' + esc(c.bump_texto || 'Aproveite enquanto está aqui e aumente suas chances de ganhar.') + '</div>' +
+      '<div class="bump-preco">' + (Number(c.bump_preco_cheio) > Number(c.bump_preco) ? '<span class="de">' + brl(c.bump_preco_cheio) + '</span>' : '') + '<span class="por">' + brl(c.bump_preco) + '</span></div>' +
+      '<button class="btn-bump" onclick="aceitarBump()">Sim! Adicionar +' + c.bump_qtd + ' cotas</button>' +
+      '<button class="btn-fant" onclick="this.closest(\'.bump-card\').remove()">Não, obrigado</button>' +
+    '</div>';
+  }
   $('sucesso-extras').innerHTML = extras;
+}
+async function aceitarBump(){
+  if(!E.buyer || !E.camp) return;
+  let p;
+  try{ p = await api('rifa_criar_bump', { p_campanha: E.camp.id, p_nome: E.buyer.nome, p_telefone: E.buyer.fone }); }
+  catch(err){ toast(err.message); return; }
+  E.ehBump = true; E.chk = { tipo: 'normal', qtd: p.qtd, giros: 0 };
+  await mostrarPix(p);
+}
+function setStep(n){
+  const st = $('chk-steps'); if(!st) return;
+  [...st.querySelectorAll('.step')].forEach(el => {
+    const s = Number(el.dataset.s);
+    el.classList.toggle('on', s === n);
+    el.classList.toggle('done', s < n);
+  });
 }
 
 /* QR decorativo para o modo demonstração */
