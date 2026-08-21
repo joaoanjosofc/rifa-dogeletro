@@ -496,8 +496,15 @@ async function editarCampanha(id){
         '<div class="col-full field"><label>Texto da oferta (opcional)</label><textarea id="ce-bumptxt" rows="2" placeholder="Ex.: Última chance de dobrar suas chances com desconto!">'+esc(f('',c.bump_texto))+'</textarea></div>'+
       '</div>'+
     '</div>'+
+    '<div style="border-top:1px solid var(--line);margin:16px 0 4px;padding-top:14px"><b style="font-size:13.5px"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></span> Pixel do Facebook (Meta Ads)</b>'+
+      '<div class="help" style="margin:6px 0 12px">Cole o ID do seu Pixel para rastrear as conversões no Gerenciador de Anúncios. Eventos enviados: <b>InitiateCheckout</b> quando o Pix é gerado e <b>Purchase</b> (com o valor em R$) quando a rifa é paga. Só dispara em pagamentos reais (Efí plugado).</div>'+
+      '<div class="formgrid">'+
+        campo('ID do Pixel do Facebook','ce-fbpixel','text',f('',c.fb_pixel_id),'col-full')+
+      '</div>'+
+    '</div>'+
     '<div style="display:flex;gap:10px;margin-top:18px"><button class="btn green full" onclick="salvarCampanha(\''+(id||'')+'\')"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></span> Salvar campanha</button><button class="btn ghost" onclick="fecharModal()">Cancelar</button></div>');
   renderThumbs();
+  if(id){ setTimeout(function(){ var el=$('ce-fbpixel'); if(el && !el.value){ rpc('rifa_get_pixel',{p_camp:id}).then(function(res){ if(res&&res.pixel&&el) el.value=res.pixel; }).catch(function(){}); } }, 0); }
 }
 function renderThumbs(){
   const el=$('ce-thumbs'); if(!el)return;
@@ -529,12 +536,19 @@ async function salvarCampanha(id){
     bump_ativo:$('ce-bump')?$('ce-bump').checked:false,
     bump_qtd:g('ce-bumpqtd')||'',bump_desconto:g('ce-bumpdesc')||'',
     bump_titulo:g('ce-bumptit'),bump_texto:g('ce-bumptxt'),
+    fb_pixel_id:g('ce-fbpixel'),
     imagens:S.imgsEdit||[]
   };
   if(id)p.id=id;
   if(!p.titulo){toast('Informe o título','erro');return;}
   if(!(p.preco_unit>0)){toast('Preço deve ser maior que zero','erro');return;}
-  try{ const r=await rpc('rifa_admin_salvar_campanha',{p}); toast('Campanha salva ','ok'); fecharModal(); viewCampanhas(); }
+  try{
+    const r=await rpc('rifa_admin_salvar_campanha',{p});
+    const campId = id || (r && (r.id || (r.campanha && r.campanha.id))) || null;
+    const px = $('ce-fbpixel') ? $('ce-fbpixel').value.trim() : '';
+    if(campId){ try{ await rpc('rifa_admin_set_pixel',{p_id:campId, p_pixel:px}); }catch(_){} }
+    toast('Campanha salva ','ok'); fecharModal(); viewCampanhas();
+  }
   catch(e){ toast(e.message,'erro'); }
 }
 
