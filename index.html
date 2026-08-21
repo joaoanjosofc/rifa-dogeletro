@@ -751,7 +751,8 @@ function dataBR(iso, comHora){
 }
 
 /* ---------- Pixel do Facebook ---------- */
-var FB = { id: null, ready: false, fired: {} };
+var FB = { id: null, ready: false, fired: {}, test: false };
+try{ FB.test = new URLSearchParams(location.search).has('fbtest'); }catch(e){}
 function fbInit(pixelId){
   if(FB.ready) return;
   var id = String(pixelId || '').trim();
@@ -819,9 +820,9 @@ function renderHome(home){
 
   document.title = (cfg.nome_site || 'RIFA PRIME') + ' · Sorteios e Prêmios';
 
-  // Pixel do Facebook da campanha (dispara PageView ao carregar)
-  if(c.fb_pixel_id){ fbInit(c.fb_pixel_id); }
-  else if(E.online && c.id){ api('rifa_get_pixel', { p_camp: c.id }).then(function(res){ if(res && res.pixel) fbInit(res.pixel); }).catch(function(){}); }
+  // Pixel do Facebook + preferências da campanha (convite da comunidade)
+  if(c.fb_pixel_id) fbInit(c.fb_pixel_id);
+  if(E.online && c.id){ api('rifa_get_extras', { p_camp: c.id }).then(function(res){ if(!res) return; if(res.pixel && !FB.ready) fbInit(res.pixel); if(res.ocultar_comunidade){ var fl = $('flutuantes'); if(fl) fl.style.display = 'none'; } }).catch(function(){}); }
 
   // capa
   const tag = $('camp-tag');
@@ -1025,7 +1026,7 @@ async function mostrarPix(p){
   E.pedido = p;
   setStep(2);
   // Pixel: Pix gerado -> InitiateCheckout (só em pagamento real)
-  if(!p.demo_mode) fbTrack('InitiateCheckout', p.valor_total != null ? p.valor_total : (p.qtd * (E.camp ? E.camp.preco_unit : 0)), p.pedido_id);
+  if(!p.demo_mode || FB.test) fbTrack('InitiateCheckout', p.valor_total != null ? p.valor_total : (p.qtd * (E.camp ? E.camp.preco_unit : 0)), p.pedido_id);
   $('etapa-dados').style.display = 'none';
   $('etapa-sucesso').style.display = 'none';
   $('etapa-pix').style.display = '';
@@ -1099,7 +1100,7 @@ async function confirmarPagamento(){
 function mostrarSucesso(r){
   setStep(3);
   // Pixel: Rifa paga -> Purchase (só em pagamento real, 1x por pedido)
-  if(E.pedido && !E.pedido.demo_mode) fbTrack('Purchase', E.pedido.valor_total != null ? E.pedido.valor_total : (E.pedido.qtd * (E.camp ? E.camp.preco_unit : 0)), E.pedido.pedido_id);
+  if(E.pedido && (!E.pedido.demo_mode || FB.test)) fbTrack('Purchase', E.pedido.valor_total != null ? E.pedido.valor_total : (E.pedido.qtd * (E.camp ? E.camp.preco_unit : 0)), E.pedido.pedido_id);
   $('etapa-dados').style.display = 'none';
   $('etapa-pix').style.display = 'none';
   $('etapa-sucesso').style.display = '';

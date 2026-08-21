@@ -497,14 +497,17 @@ async function editarCampanha(id){
       '</div>'+
     '</div>'+
     '<div style="border-top:1px solid var(--line);margin:16px 0 4px;padding-top:14px"><b style="font-size:13.5px"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></span> Pixel do Facebook (Meta Ads)</b>'+
-      '<div class="help" style="margin:6px 0 12px">Cole o ID do seu Pixel para rastrear as conversões no Gerenciador de Anúncios. Eventos enviados: <b>InitiateCheckout</b> quando o Pix é gerado e <b>Purchase</b> (com o valor em R$) quando a rifa é paga. Só dispara em pagamentos reais (Efí plugado).</div>'+
+      '<div class="help" style="margin:6px 0 12px">Cole o ID do seu Pixel para rastrear as conversões no Gerenciador de Anúncios. Eventos enviados: <b>InitiateCheckout</b> quando o Pix é gerado e <b>Purchase</b> (com o valor em R$) quando a rifa é paga. Só dispara em pagamentos reais (Efí plugado). Para testar antes, abra o site com <code>?fbtest=1</code> no fim do link (usa o modo de teste do Meta, não conta como conversão real).</div>'+
       '<div class="formgrid">'+
         campo('ID do Pixel do Facebook','ce-fbpixel','text',f('',c.fb_pixel_id),'col-full')+
       '</div>'+
     '</div>'+
+    '<div style="border-top:1px solid var(--line);margin:16px 0 4px;padding-top:14px"><div style="display:flex;align-items:center;justify-content:space-between"><b style="font-size:13.5px">Convite da comunidade VIP e redes sociais</b><label class="toggle"><input type="checkbox" id="ce-comunidade" '+(c.ocultar_comunidade?'':'checked')+'><span class="sl"></span></label></div>'+
+      '<div class="help" style="margin:6px 0 0">Ligado: aparece o card "Faça parte da nossa comunidade VIP" e o botão de redes sociais no site. Desligado: esta rifa fica sem esse convite.</div>'+
+    '</div>'+
     '<div style="display:flex;gap:10px;margin-top:18px"><button class="btn green full" onclick="salvarCampanha(\''+(id||'')+'\')"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></span> Salvar campanha</button><button class="btn ghost" onclick="fecharModal()">Cancelar</button></div>');
   renderThumbs();
-  if(id){ setTimeout(function(){ var el=$('ce-fbpixel'); if(el && !el.value){ rpc('rifa_get_pixel',{p_camp:id}).then(function(res){ if(res&&res.pixel&&el) el.value=res.pixel; }).catch(function(){}); } }, 0); }
+  if(id){ setTimeout(function(){ rpc('rifa_get_extras',{p_camp:id}).then(function(res){ if(!res)return; var el=$('ce-fbpixel'); if(el && !el.value && res.pixel) el.value=res.pixel; var cb=$('ce-comunidade'); if(cb) cb.checked = !res.ocultar_comunidade; }).catch(function(){}); }, 0); }
 }
 function renderThumbs(){
   const el=$('ce-thumbs'); if(!el)return;
@@ -546,7 +549,8 @@ async function salvarCampanha(id){
     const r=await rpc('rifa_admin_salvar_campanha',{p});
     const campId = id || (r && (r.id || (r.campanha && r.campanha.id))) || null;
     const px = $('ce-fbpixel') ? $('ce-fbpixel').value.trim() : '';
-    if(campId){ try{ await rpc('rifa_admin_set_pixel',{p_id:campId, p_pixel:px}); }catch(_){} }
+    const ocultar = $('ce-comunidade') ? !$('ce-comunidade').checked : false;
+    if(campId){ try{ await rpc('rifa_admin_set_extras',{p_id:campId, p_pixel:px, p_ocultar:ocultar}); }catch(_){} }
     toast('Campanha salva ','ok'); fecharModal(); viewCampanhas();
   }
   catch(e){ toast(e.message,'erro'); }
