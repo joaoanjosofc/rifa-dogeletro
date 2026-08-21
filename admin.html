@@ -814,19 +814,21 @@ async function viewConfig(){
       '<button class="btn green full" style="margin-top:14px" onclick="salvarConfig()"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></span> Salvar configurações</button>'+
     '</div>'+
     '<div class="card"><h3><span class="t"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="currentColor" stroke="none"><path d="M12 2.5l5 5-5 5-5-5z"/><path d="M12 11.5l5 5-5 5-5-5z"/></svg></span> Integração Efí (PIX real)</span></h3>'+
+      '<div class="help" style="margin-bottom:10px">Configure aqui — sem Supabase, sem openssl. Cole os dados da sua aplicação PIX da Efí e suba o certificado <code>.p12</code> que você baixou no painel da Efí.</div>'+
       campoSelect('Ambiente','cf-amb',['homologacao','producao'],c.efi_ambiente||'homologacao')+
-      campo('Chave PIX recebedora','cf-pixkey','text',esc(c.efi_pix_key||''))+
-      '<button class="btn ghost sm" style="margin-top:6px" onclick="testarEfi()"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6"/><path d="M15 2v6"/><path d="M7 8h10v3a5 5 0 0 1-10 0z"/><path d="M12 16v6"/></svg></span> Testar função Efí</button> <span id="efi-teste"></span>'+
-      '<div class="help" style="margin-top:14px"><b style="color:#fff">Passos para ativar o PIX real:</b><ol class="secret-list" style="margin-top:8px">'+
-        '<li>Crie sua aplicação PIX na Efí e baixe o certificado <code>.p12</code>.</li>'+
-        '<li>Converta para PEM: <br><code class="inl">openssl pkcs12 -in cert.p12 -nocerts -nodes -out key.pem</code><br><code class="inl">openssl pkcs12 -in cert.p12 -clcerts -nokeys -out cert.pem</code></li>'+
-        '<li>Em <b>Supabase › Edge Functions › Secrets</b>, adicione: <code>EFI_CLIENT_ID</code>, <code>EFI_CLIENT_SECRET</code>, <code>EFI_PIX_KEY</code>, <code>EFI_AMBIENTE</code>, <code>EFI_CERT</code> (conteúdo do cert.pem), <code>EFI_KEY</code> (conteúdo do key.pem), <code>EFI_WEBHOOK_TOKEN</code> (invente um segredo).</li>'+
-        '<li>Cadastre o webhook na Efí apontando para:<div class="copybox" style="margin-top:6px"><span>'+esc(webhookUrl)+'</span></div></li>'+
-        '<li>Salve tudo, desligue o "Modo demonstração" acima e faça um teste em homologação.</li>'+
-      '</ol></div>'+
+      campo('Client ID','cf-efi-cid','text','')+
+      '<div class="field"><label>Client Secret</label><input id="cf-efi-secret" type="password" placeholder="cole o Client Secret"></div>'+
+      campo('Chave PIX recebedora','cf-pixkey','text','')+
+      '<div class="field"><label>Certificado (.p12)</label><div class="dropzone" id="cf-efi-certzone" onclick="document.getElementById(\'cf-efi-cert\').click()">Clique para enviar o arquivo .p12</div><input type="file" id="cf-efi-cert" accept=".p12,application/x-pkcs12" style="display:none" onchange="selecionarCertEfi(this)"><div class="help" id="cf-efi-certinfo" style="margin-top:5px"></div></div>'+
+      campo('Senha do certificado (deixe vazio se não tiver)','cf-efi-certsenha','text','')+
+      '<button class="btn green full" style="margin-top:12px" onclick="salvarEfi()"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></span> Salvar integração Efí</button>'+
+      '<button class="btn ghost sm" style="margin-top:8px" onclick="testarEfi()">Testar função Efí</button> <span id="efi-teste"></span>'+
+      '<div class="help" style="margin-top:14px"><b style="color:#fff">Webhook (aviso de pagamento):</b> depois de salvar, me diga aqui no chat "registra o webhook" que eu ativo na Efí pra você. URL:<div class="copybox" style="margin-top:6px"><span id="cf-efi-webhook" style="word-break:break-all">salve para gerar</span></div></div>'+
+      '<div class="help" style="margin-top:8px">Quando terminar de configurar, desligue o "Modo demonstração" (card ao lado) para gerar PIX de verdade.</div>'+
     '</div>'+
   '</div>'+
   '<div class="card"><h3><span class="t"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12v5a6 6 0 0 1-12 0z"/><path d="M18 5h2.5a2 2 0 0 1-2.2 4"/><path d="M6 5H3.5a2 2 0 0 0 2.2 4"/><line x1="12" y1="15" x2="12" y2="18"/><path d="M8.5 21h7l-.7-3h-5.6z"/></svg></span> Prêmios instantâneos pendentes</span></h3>'+pendHtml+'</div>';
+  carregarEfi();
 }
 function previewCores(){ const c1=$('cf-cor1').value,c2=$('cf-cor2').value; $('cf-cor-prev').style.background='linear-gradient(135deg,'+c1+','+c2+')'; document.documentElement.style.setProperty('--red',c1); document.documentElement.style.setProperty('--red-dark',c2); }
 async function subirLogo(input){
@@ -852,6 +854,43 @@ async function salvarConfig(){
   };
   if(p.logo_url===undefined)delete p.logo_url;
   try{ await rpc('rifa_admin_salvar_config',{p}); toast('Configurações salvas ','ok'); carregarConfigBadge(); }catch(e){ toast(e.message,'erro'); }
+}
+async function carregarEfi(){
+  try{
+    const e = await rpc('rifa_admin_get_efi');
+    if(!e) return;
+    if($('cf-amb') && e.ambiente) $('cf-amb').value = e.ambiente;
+    if($('cf-efi-cid')) $('cf-efi-cid').value = e.client_id || '';
+    if($('cf-pixkey')) $('cf-pixkey').value = e.pix_key || '';
+    if($('cf-efi-secret')) $('cf-efi-secret').placeholder = e.tem_secret ? 'Client Secret salvo — deixe em branco pra manter' : 'cole o Client Secret';
+    const cz = $('cf-efi-certzone'); if(cz && e.tem_cert) cz.textContent = 'Certificado enviado — clique para trocar';
+    const wh = $('cf-efi-webhook'); if(wh && e.webhook_token) wh.textContent = EFI_FUNC_URL + '?token=' + e.webhook_token;
+  }catch(err){}
+}
+function selecionarCertEfi(input){
+  const file = input.files[0]; if(!file) return;
+  const info = $('cf-efi-certinfo');
+  const rd = new FileReader();
+  rd.onload = function(){ S.efiCertB64 = String(rd.result).split(',')[1] || ''; const cz=$('cf-efi-certzone'); if(cz) cz.textContent='Selecionado: '+file.name+' — clique para trocar'; if(info) info.textContent='Pronto pra salvar ('+Math.round(file.size/1024)+' KB).'; };
+  rd.onerror = function(){ if(info) info.textContent='Não consegui ler o arquivo.'; };
+  rd.readAsDataURL(file);
+}
+async function salvarEfi(){
+  const p = {
+    client_id: $('cf-efi-cid') ? $('cf-efi-cid').value.trim() : '',
+    client_secret: $('cf-efi-secret') ? $('cf-efi-secret').value.trim() : '',
+    pix_key: $('cf-pixkey') ? $('cf-pixkey').value.trim() : '',
+    ambiente: $('cf-amb') ? $('cf-amb').value : 'homologacao',
+    cert_senha: $('cf-efi-certsenha') ? $('cf-efi-certsenha').value : ''
+  };
+  if(S.efiCertB64) p.cert_p12 = S.efiCertB64;
+  try{
+    const r = await rpc('rifa_admin_salvar_efi', { p });
+    S.efiCertB64 = null;
+    toast('Integração Efí salva ','ok');
+    if(r && r.webhook_token){ const wh=$('cf-efi-webhook'); if(wh) wh.textContent = EFI_FUNC_URL + '?token=' + r.webhook_token; }
+    carregarEfi();
+  }catch(e){ toast(e.message,'erro'); }
 }
 async function marcarPago(tipo,id){
   try{ await rpc('rifa_admin_marcar_pago',{p_tipo:tipo,p_id:id}); toast('Marcado como pago ','ok'); viewConfig(); }catch(e){ toast(e.message,'erro'); }
