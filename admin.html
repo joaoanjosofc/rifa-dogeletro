@@ -608,11 +608,36 @@ async function carregarPremios(id){
   '</div>'+
   '<div class="card"><h3><span class="t"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2 2 2 0 0 0 0 6 2 2 0 0 1-2 2H5a2 2 0 0 1-2-2 2 2 0 0 0 0-6z"/><line x1="13" y1="7" x2="13" y2="17" stroke-dasharray="1.5 2.5"/></svg></span> Bilhetes premiados</span></h3>'+
     '<div class="help" style="margin-bottom:10px">Números que já saem premiados. Quem comprar o número leva o prêmio na hora. '+d.bilhetes.filter(b=>b.ganho).length+' já encontrados · '+bilLivres.length+' disponíveis.</div>'+
+    '<div class="help" id="bil-prob" style="margin:2px 0 12px;line-height:1.7;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:11px 13px"></div>'+
     '<div class="linha-premio-adm" style="color:var(--txt3);font-size:11px;font-weight:700"><div>NÚMERO</div><div>VALOR (R$)</div><div>DESCRIÇÃO</div><div></div></div>'+
-    '<div id="bil-lista">'+linhasBil+'</div>'+
+    '<div id="bil-lista" oninput="calcProbBil()">'+linhasBil+'</div>'+
     '<button class="btn ghost sm" onclick="addBilhete()">+ Adicionar bilhete</button>'+
     '<button class="btn green full" style="margin-top:12px" onclick="salvarBilhetes(\''+id+'\')"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></span> Salvar bilhetes</button>'+
   '</div>';
+  S.probCtx = { total: Number(c.total_cotas) || 0, destaque: Number(c.pacote_destaque) || 50 };
+  calcProbBil();
+}
+/* calculadora de probabilidade dos bilhetes premiados (chance real = bilhetes ÷ cotas) */
+function calcProbBil(){
+  var box = $('bil-prob'); if(!box) return;
+  var ctx = S.probCtx || { total: 0, destaque: 50 };
+  var linhas = [...document.querySelectorAll('#bil-lista .linha-premio-adm')];
+  var nums = linhas.map(function(l){ var i = l.querySelectorAll('input'); return parseInt(i[0].value); }).filter(function(n){ return Number.isInteger(n); });
+  var qtd = nums.length, total = ctx.total || 0;
+  if(!total || !qtd){
+    box.innerHTML = 'A probabilidade é <b>bilhetes ÷ total de cotas</b>. Adicione bilhetes abaixo para ver a chance real.';
+    return;
+  }
+  var fora = nums.filter(function(n){ return n < 1 || n > total; }).length;
+  var repetidos = nums.length - new Set(nums).size;
+  var umEm = Math.round(total / qtd);
+  var pDest = (1 - Math.pow(1 - qtd / total, ctx.destaque)) * 100;
+  var pDestTxt = (pDest < 0.01 ? pDest.toFixed(4) : pDest.toFixed(2)).replace('.', ',');
+  box.innerHTML =
+    '<b style="color:#fff">Probabilidade real com ' + qtd + ' bilhete' + (qtd > 1 ? 's' : '') + ':</b> 1 em <b>' + num(umEm) + '</b> por cota · quem compra <b>' + ctx.destaque + '</b> cotas tem <b>' + pDestTxt + '%</b> de chance' +
+    '<br>Na média, sai <b>1 ganhador a cada ' + num(umEm) + ' cotas vendidas</b>. Para sair mais ganhador: adicione mais bilhetes aqui, ou diminua o total de cotas da campanha (hoje: ' + num(total) + ').' +
+    (fora ? '<br><span style="color:#ffb74d">⚠ ' + fora + ' bilhete(s) com número maior que o total de cotas — esses nunca podem ser sorteados. Corrija.</span>' : '') +
+    (repetidos ? '<br><span style="color:#ffb74d">⚠ Há número repetido na lista.</span>' : '');
 }
 function setModo(m){
   S.campanhaEdit.campanha.roleta_modo=m;
@@ -625,10 +650,10 @@ function premioLinha(tipo,valor,desc,qtd){
   return '<div class="linha-premio-adm"><input type="number" step="0.01" value="'+esc(valor)+'" placeholder="50"><input type="text" value="'+esc(desc||'NO PIX')+'" placeholder="NO PIX"><input type="number" value="'+esc(qtd||1)+'" min="1"><button class="btn ghost sm" onclick="this.parentElement.remove()">✕</button></div>';
 }
 function premioLinhaBil(numero,valor,desc){
-  return '<div class="linha-premio-adm"><input type="number" value="'+esc(numero||'')+'" placeholder="12389"><input type="number" step="0.01" value="'+esc(valor||'')+'" placeholder="500"><input type="text" value="'+esc(desc||'NO PIX')+'" placeholder="NO PIX"><button class="btn ghost sm" onclick="this.parentElement.remove()">✕</button></div>';
+  return '<div class="linha-premio-adm"><input type="number" value="'+esc(numero||'')+'" placeholder="12389"><input type="number" step="0.01" value="'+esc(valor||'')+'" placeholder="500"><input type="text" value="'+esc(desc||'NO PIX')+'" placeholder="NO PIX"><button class="btn ghost sm" onclick="this.parentElement.remove();try{calcProbBil()}catch(e){}">✕</button></div>';
 }
 function addPremio(){ $('rol-lista').insertAdjacentHTML('beforeend',premioLinha('rol','','NO PIX',1)); }
-function addBilhete(){ $('bil-lista').insertAdjacentHTML('beforeend',premioLinhaBil('','','NO PIX')); }
+function addBilhete(){ $('bil-lista').insertAdjacentHTML('beforeend',premioLinhaBil('','','NO PIX')); try{calcProbBil()}catch(e){} }
 async function salvarChance(id){
   const modo=S.campanhaEdit.campanha.roleta_modo;
   const p={id:id,roleta_modo:modo};
