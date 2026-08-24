@@ -609,13 +609,53 @@ async function carregarPremios(id){
   '<div class="card"><h3><span class="t"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2 2 2 0 0 0 0 6 2 2 0 0 1-2 2H5a2 2 0 0 1-2-2 2 2 0 0 0 0-6z"/><line x1="13" y1="7" x2="13" y2="17" stroke-dasharray="1.5 2.5"/></svg></span> Bilhetes premiados</span></h3>'+
     '<div class="help" style="margin-bottom:10px">Números que já saem premiados. Quem comprar o número leva o prêmio na hora. '+d.bilhetes.filter(b=>b.ganho).length+' já encontrados · '+bilLivres.length+' disponíveis.</div>'+
     '<div class="help" id="bil-prob" style="margin:2px 0 12px;line-height:1.7;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:11px 13px"></div>'+
-    '<div class="linha-premio-adm" style="color:var(--txt3);font-size:11px;font-weight:700"><div>NÚMERO</div><div>VALOR (R$)</div><div>DESCRIÇÃO</div><div></div></div>'+
+    '<div style="background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:12px 13px;margin-bottom:14px"><b style="font-size:12.5px;color:#fff">🎲 Gerar em massa (números aleatórios)</b>'+
+      '<div class="linha-premio-adm" style="grid-template-columns:.7fr 1fr 1.5fr .9fr;margin-top:9px"><input type="number" id="ms-qtd" min="1" max="2000" placeholder="Qtd (ex: 100)"><input type="number" step="0.01" id="ms-valor" placeholder="Valor R$ (vazio = físico)"><input type="text" id="ms-desc" placeholder="NO PIX, MOTO 0KM, TV 43&quot;…"><input type="number" step="0.5" id="ms-pct" min="0" max="100" placeholder="Libera em % (vazio = já)"></div>'+
+      '<button class="btn ghost sm" style="margin-top:9px" onclick="gerarMassa(\''+id+'\')">Gerar bilhetes</button>'+
+      '<div class="help" style="margin-top:7px">Sorteia números livres sozinho (nunca repete nem usa número já vendido). Deixe o valor vazio e escreva o prêmio na descrição para bilhete físico (moto, TV…). Preencha "Libera em %" para criar como <b>programados</b> — entram em jogo só quando a rifa atingir o marco.</div>'+
+    '</div>'+
+    '<b style="font-size:12.5px;color:#fff">Adicionar manualmente</b>'+
+    '<div class="linha-premio-adm" style="color:var(--txt3);font-size:11px;font-weight:700;margin-top:6px"><div>NÚMERO</div><div>VALOR (R$)</div><div>DESCRIÇÃO</div><div></div></div>'+
     '<div id="bil-lista" oninput="calcProbBil()">'+linhasBil+'</div>'+
     '<button class="btn ghost sm" onclick="addBilhete()">+ Adicionar bilhete</button>'+
     '<button class="btn green full" style="margin-top:12px" onclick="salvarBilhetes(\''+id+'\')"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></span> Salvar bilhetes</button>'+
+  '</div>'+
+  '<div class="card"><h3><span class="t"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span> Bilhetes programados</span></h3>'+
+    '<div class="help" style="margin-bottom:6px">Formação de caixa às claras: o bilhete <b>só entra em jogo</b> quando a rifa atingir o percentual que você definir — antes disso ele nem existe no sorteio, e o site mostra "🔒 libera aos X%" (sem revelar número). Ao atingir o marco, entra sozinho na lista de bilhetes premiados.</div>'+
+    '<div class="help" style="margin-bottom:10px">Vendido até agora: <b id="ag-pct" style="color:#fff">…</b></div>'+
+    '<div class="linha-premio-adm" style="grid-template-columns:1fr 1fr 1.4fr .8fr 34px;color:var(--txt3);font-size:11px;font-weight:700"><div>NÚMERO (opcional)</div><div>VALOR (R$)</div><div>DESCRIÇÃO</div><div>LIBERA EM %</div><div></div></div>'+
+    '<div id="ag-lista"></div>'+
+    '<button class="btn ghost sm" onclick="addAgendado()">+ Programar bilhete</button>'+
+    '<button class="btn green full" style="margin-top:12px" onclick="salvarAgendados(\''+id+'\')"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></span> Salvar programados</button>'+
+    '<div class="help" id="ag-liberados" style="margin-top:12px"></div>'+
   '</div>';
   S.probCtx = { total: Number(c.total_cotas) || 0, destaque: Number(c.pacote_destaque) || 50 };
   calcProbBil();
+  carregarAgendados(id);
+}
+function premioLinhaAg(numero,valor,desc,pct){
+  return '<div class="linha-premio-adm" style="grid-template-columns:1fr 1fr 1.4fr .8fr 34px"><input type="number" value="'+esc(numero==null?'':numero)+'" placeholder="sorteia livre"><input type="number" step="0.01" value="'+esc(valor||'')+'" placeholder="500"><input type="text" value="'+esc(desc||'NO PIX')+'" placeholder="NO PIX"><input type="number" step="0.5" min="0" max="100" value="'+esc(pct==null?10:pct)+'" placeholder="10"><button class="btn ghost sm" onclick="this.parentElement.remove()">✕</button></div>';
+}
+function addAgendado(){ $('ag-lista').insertAdjacentHTML('beforeend',premioLinhaAg('','','NO PIX',10)); }
+async function carregarAgendados(id){
+  try{
+    const d = await rpc('rifa_admin_bilhetes_agendados',{p_campanha:id});
+    if($('ag-pct')) $('ag-pct').textContent = (d.pct_atual!=null? String(d.pct_atual).replace('.',',') : '?') + '%';
+    if($('ag-lista')) $('ag-lista').innerHTML = (d.pendentes||[]).map(a=>premioLinhaAg(a.numero,a.valor,a.descricao,a.libera_pct)).join('');
+    const lib = d.liberados||[];
+    if($('ag-liberados')) $('ag-liberados').innerHTML = lib.length
+      ? '<b style="color:#7ff0ab">Já liberados automaticamente:</b><br>' + lib.map(l=>'✔ nº '+String(l.numero).padStart(6,'0')+' · R$ '+l.valor+' ('+l.descricao+') — entrou aos '+String(l.libera_pct).replace('.',',')+'%').join('<br>')
+      : 'Nenhum liberado ainda — vão aparecendo aqui conforme os marcos forem atingidos.';
+  }catch(e){ if($('ag-pct')) $('ag-pct').textContent = '—'; }
+}
+async function salvarAgendados(id){
+  const linhas=[...document.querySelectorAll('#ag-lista .linha-premio-adm')];
+  const lista=linhas.map(l=>{const i=l.querySelectorAll('input');return{numero:i[0].value.trim()===''?null:parseInt(i[0].value),valor:parseFloat(i[1].value)||0,descricao:i[2].value.trim()||'NO PIX',libera_pct:parseFloat(i[3].value)||0};}).filter(b=>b.valor>0||(b.descricao&&b.descricao.toUpperCase()!=='NO PIX'));
+  try{
+    const r=await rpc('rifa_admin_set_bilhetes_agendados',{p_campanha:id,p_lista:lista});
+    toast('Programados salvos: '+r.total+(r.liberados_agora?' ('+r.liberados_agora+' já liberado(s) — o marco já tinha passado)':'')+' ','ok');
+    carregarPremios(id);
+  }catch(e){ toast(e.message,'erro'); }
 }
 /* calculadora de probabilidade dos bilhetes premiados (chance real = bilhetes ÷ cotas) */
 function calcProbBil(){
@@ -650,7 +690,7 @@ function premioLinha(tipo,valor,desc,qtd){
   return '<div class="linha-premio-adm"><input type="number" step="0.01" value="'+esc(valor)+'" placeholder="50"><input type="text" value="'+esc(desc||'NO PIX')+'" placeholder="NO PIX"><input type="number" value="'+esc(qtd||1)+'" min="1"><button class="btn ghost sm" onclick="this.parentElement.remove()">✕</button></div>';
 }
 function premioLinhaBil(numero,valor,desc){
-  return '<div class="linha-premio-adm"><input type="number" value="'+esc(numero||'')+'" placeholder="12389"><input type="number" step="0.01" value="'+esc(valor||'')+'" placeholder="500"><input type="text" value="'+esc(desc||'NO PIX')+'" placeholder="NO PIX"><button class="btn ghost sm" onclick="this.parentElement.remove();try{calcProbBil()}catch(e){}">✕</button></div>';
+  return '<div class="linha-premio-adm"><input type="number" value="'+esc(numero||'')+'" placeholder="12389"><input type="number" step="0.01" value="'+esc(valor||'')+'" placeholder="500 (vazio = físico)"><input type="text" value="'+esc(desc||'NO PIX')+'" placeholder="NO PIX ou MOTO 0KM"><button class="btn ghost sm" onclick="this.parentElement.remove();try{calcProbBil()}catch(e){}">✕</button></div>';
 }
 function addPremio(){ $('rol-lista').insertAdjacentHTML('beforeend',premioLinha('rol','','NO PIX',1)); }
 function addBilhete(){ $('bil-lista').insertAdjacentHTML('beforeend',premioLinhaBil('','','NO PIX')); try{calcProbBil()}catch(e){} }
@@ -668,8 +708,23 @@ async function salvarRoleta(id){
 }
 async function salvarBilhetes(id){
   const linhas=[...document.querySelectorAll('#bil-lista .linha-premio-adm')];
-  const lista=linhas.map(l=>{const i=l.querySelectorAll('input');return{numero:parseInt(i[0].value),valor:parseFloat(i[1].value)||0,descricao:i[2].value.trim()||'NO PIX'};}).filter(b=>Number.isInteger(b.numero)&&b.valor>0);
+  // aceita prêmio em dinheiro (valor > 0) OU prêmio físico (valor vazio + descrição, ex.: MOTO 0KM)
+  const lista=linhas.map(l=>{const i=l.querySelectorAll('input');return{numero:parseInt(i[0].value),valor:parseFloat(i[1].value)||0,descricao:i[2].value.trim()||'NO PIX'};}).filter(b=>Number.isInteger(b.numero)&&(b.valor>0||(b.descricao&&b.descricao.toUpperCase()!=='NO PIX')));
   try{ const r=await rpc('rifa_admin_set_bilhetes',{p_campanha:id,p_lista:lista}); toast('Bilhetes salvos: '+r.total+' ','ok'); carregarPremios(id); }catch(e){ toast(e.message,'erro'); }
+}
+async function gerarMassa(id){
+  const qtd=parseInt($('ms-qtd').value)||0;
+  const valor=parseFloat($('ms-valor').value)||0;
+  const desc=$('ms-desc').value.trim()||'NO PIX';
+  const pctRaw=$('ms-pct').value.trim();
+  const pct=pctRaw===''?null:(parseFloat(pctRaw)||0);
+  if(qtd<1||qtd>2000) return toast('Quantidade: de 1 a 2000','erro');
+  if(valor<=0&&desc.toUpperCase()==='NO PIX') return toast('Informe o valor em R$ ou descreva o prêmio (ex.: MOTO 0KM)','erro');
+  try{
+    const r=await rpc('rifa_admin_add_bilhetes_massa',{p_campanha:id,p_qtd:qtd,p_valor:valor,p_descricao:desc,p_libera_pct:pct});
+    toast(r.modo==='agendado'?('Programados criados: '+r.total+' (liberam aos '+pct+'%) '):('Bilhetes gerados: '+r.total+' — já em jogo '),'ok');
+    carregarPremios(id);
+  }catch(e){ toast(e.message,'erro'); }
 }
 
 /* ================= PEDIDOS ================= */
