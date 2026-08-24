@@ -355,6 +355,12 @@ body.carregando .shell{visibility:hidden}
 .nc-tx{font-size:12px;color:var(--ink);line-height:1.35}
 .nc-tx small{display:block;color:var(--gray);font-size:10.5px;font-weight:600}
 
+/* ---------- carregamento do PIX (QR + código) ---------- */
+.mini-ring{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid color-mix(in srgb, var(--red) 25%, transparent);border-top-color:var(--red);animation:spgira .8s linear infinite;vertical-align:-2px;margin-right:7px}
+.qr-carregando{width:184px;height:184px;border-radius:12px;background:#f4f4f7;border:1.5px dashed var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;margin:0 auto}
+.qr-carregando .ring-qr{width:30px;height:30px;border-radius:50%;border:3px solid color-mix(in srgb, var(--red) 22%, transparent);border-top-color:var(--red);animation:spgira .8s linear infinite}
+.qr-carregando small{color:#8a8a94;font-size:11px;font-weight:600;padding:0 14px;text-align:center}
+
 /* ---------- ganhadores ---------- */
 .ganhador{display:flex;align-items:center;gap:11px;padding:11px 4px;border-bottom:1px solid var(--line)}
 .ganhador:last-child{border-bottom:none}
@@ -684,7 +690,7 @@ try{
           <div class="marca-agua" id="qr-marca"><span>SIMULAÇÃO</span></div>
         </div>
         <div class="copia-cola" id="codigo-pix">—</div>
-        <button class="btn-cheio" style="margin-top:11px" onclick="copiarPix()"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="4" rx="1"/><path d="M8 5H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/></svg></span> Copiar código</button>
+        <button class="btn-cheio" id="btn-copiar" style="margin-top:11px" onclick="copiarPix()"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="4" rx="1"/><path d="M8 5H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/></svg></span> Copiar código</button>
         <div class="timer-pix">Expira em <b id="timer">--:--</b></div>
         <button class="btn-cheio vermelho" id="btn-simular" onclick="confirmarPagamento()"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.1V12a10 10 0 1 1-5.9-9.1"/><polyline points="22 4 12 14.1 9 11.1"/></svg></span> Simular pagamento aprovado</button>
         <button class="btn-fant" onclick="fecharModal('modal-checkout')">Fechar</button>
@@ -771,6 +777,18 @@ const E = {
 /* ---------- dados de exemplo (fallback sem conexão) ---------- */
 const EXEMPLO = {
   config: { nome_site: 'RIFA PRIME', demo_mode: true, link_vip: null, link_suporte: null, links_sociais: {} },
+  // PRÉVIA da interface (só aparece no modo teste ?exemplo=1 — no site real
+  // a seção se preenche sozinha com os ganhadores verdadeiros do banco)
+  ganhadores: [
+    { nome: 'Exemplo', premio: 'R$ 500 no PIX', valor: null, tipo: 'bilhete', numero: 4821 },
+    { nome: 'Teste', premio: 'Smart TV 43"', valor: null, tipo: 'roleta' },
+    { nome: 'Amostra', premio: null, valor: 200, tipo: 'bilhete', numero: 77123 },
+  ],
+  compras_exemplo: [
+    { nome: 'Exemplo', qtd: 38, min: 12 },
+    { nome: 'Teste', qtd: 159, min: 45 },
+    { nome: 'Amostra', qtd: 25, min: 120 },
+  ],
   campanha: {
     id: null, titulo: 'MOTO 0KM 2026 EDIÇÃO ESPECIAL', subtitulo: 'POR APENAS 0,45 CENTAVINHOS!',
     tag_destaque: 'RETA FINAL, APROVEITA ', preco_unit: 0.45, total_cotas: 100000,
@@ -874,6 +892,7 @@ function iniciarNotifCompras(){
   if(NOTIF.h || !E.online || !E.camp || !E.camp.id) return;
   api('rifa_compras_recentes', { p_camp: E.camp.id }).then(function(l){
     if(!Array.isArray(l) || !l.length) return;
+    NOTIF.previa = false;
     NOTIF.lista = l.slice().sort(function(){ return Math.random() - .5; });
     NOTIF.h = setTimeout(mostrarNotifCompra, 3500);
   }).catch(function(){});
@@ -884,9 +903,10 @@ function mostrarNotifCompra(){
   var it = NOTIF.lista[NOTIF.i % NOTIF.lista.length]; NOTIF.i++;
   var m = Number(it.min) || 1;
   var tempo = m < 60 ? ('há ' + m + ' min') : (m < 1440 ? ('há ' + Math.floor(m/60) + ' h') : ('há ' + Math.floor(m/1440) + ' d'));
+  var selo = NOTIF.previa ? 'exemplo · modo teste' : (tempo + ' · compra verificada');
   el.innerHTML = '<span class="nc-ava">' + esc(String(it.nome || '?').charAt(0).toUpperCase()) + '</span>' +
     '<span class="nc-tx"><b>' + esc(it.nome || 'Alguém') + '</b> comprou <b>' + Number(it.qtd || 0) + '</b> número' + (Number(it.qtd) > 1 ? 's' : '') +
-    '<small>' + tempo + ' · compra verificada</small></span>';
+    '<small>' + selo + '</small></span>';
   el.classList.add('ver');
   setTimeout(function(){ el.classList.remove('ver'); }, 5200);
   NOTIF.h = setTimeout(mostrarNotifCompra, 9000 + Math.random() * 9000);
@@ -897,10 +917,14 @@ function pararNotifCompras(){
 }
 
 /* ---------- ganhadores (dados reais do banco) ---------- */
-function renderGanhadores(lista){
+function renderGanhadores(lista, previa){
   var sec = $('sec-ganhadores');
   if(!sec) return;
   if(!Array.isArray(lista) || !lista.length){ sec.style.display = 'none'; return; }
+  var sub = sec.querySelector('.sub');
+  if(sub) sub.textContent = previa
+    ? 'PRÉVIA com dados de exemplo — no site real preenche sozinho com os ganhadores verdadeiros'
+    : 'Prêmios já entregues nesta campanha';
   $('lista-ganhadores').innerHTML = lista.slice(0, 10).map(function(g){
     var premio = g.premio || (g.valor != null ? brl(Number(g.valor)) : 'Prêmio');
     var det = g.tipo === 'roleta' ? 'Roleta premiada' : ('Bilhete premiado' + (g.numero != null ? ' · nº ' + String(g.numero).padStart(6, '0') : ''));
@@ -973,7 +997,15 @@ function renderHome(home){
       if(res.notif_compras === false) pararNotifCompras();
       else iniciarNotifCompras();
     }).catch(function(){});
-    api('rifa_ganhadores', { p_camp: c.id }).then(renderGanhadores).catch(function(){});
+    api('rifa_ganhadores', { p_camp: c.id }).then(function(l){ renderGanhadores(l, false); }).catch(function(){});
+  } else if(!E.online){
+    // modo teste (?exemplo=1): PRÉVIA da seção de ganhadores e das notificações
+    renderGanhadores(home.ganhadores || [], true);
+    if(!NOTIF.h && Array.isArray(home.compras_exemplo) && home.compras_exemplo.length){
+      NOTIF.previa = true;
+      NOTIF.lista = home.compras_exemplo.slice();
+      NOTIF.h = setTimeout(mostrarNotifCompra, 3000);
+    }
   }
 
   // capa
@@ -1188,18 +1220,26 @@ async function mostrarPix(p){
   $('etapa-sucesso').style.display = 'none';
   $('etapa-pix').style.display = '';
   iniciarTimer(p.expira_em);
+  const btnCopiar = $('btn-copiar');
   if(p.demo_mode){
     $('qr-marca').style.display = '';
     $('btn-simular').style.display = '';
     $('selo-pix').style.display = '';
     $('codigo-pix').textContent = 'PIX-SIMULADO-SEM-VALOR-REAL-' + p.pedido_id;
+    if(btnCopiar){ btnCopiar.style.display = ''; btnCopiar.disabled = false; }
+    E.pixPronto = true;
     desenharQrFake();
   }else{
-    // PIX REAL via Efí
+    // PIX REAL via Efí — esconde o botão de copiar e mostra carregamento
+    // (evita a pessoa copiar o texto de "gerando…" antes do código chegar)
+    E.pixPronto = false;
     $('qr-marca').style.display = 'none';
     $('btn-simular').style.display = 'none';
     $('selo-pix').style.display = 'none';
-    $('codigo-pix').textContent = 'Gerando cobrança PIX…';
+    if(btnCopiar){ btnCopiar.style.display = 'none'; btnCopiar.disabled = true; }
+    $('codigo-pix').innerHTML = '<span class="mini-ring"></span> Gerando seu código PIX…';
+    var qf = document.getElementById('qr-fake');
+    if(qf) qf.outerHTML = '<div id="qr-fake" class="qr-carregando"><span class="ring-qr"></span><small>gerando QR Code…</small></div>';
     try{
       const r = await fetch(EFI_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'criar-cobranca', pedido_id: p.pedido_id }) });
       const cob = await r.json();
@@ -1207,10 +1247,20 @@ async function mostrarPix(p){
       $('codigo-pix').textContent = cob.copia_cola || 'PIX gerado';
       if(cob.imagem_qrcode){
         document.getElementById('qr-fake').outerHTML = '<img id="qr-fake" src="' + cob.imagem_qrcode + '" alt="QR Code PIX" style="width:184px;height:184px">';
+      }else{
+        var qs = document.getElementById('qr-fake');
+        if(qs) qs.outerHTML = '<div id="qr-fake" class="qr-carregando"><small>Use o código copia e cola abaixo 👇</small></div>';
+      }
+      // só agora libera o botão de copiar (código real em mãos)
+      if(cob.copia_cola){
+        E.pixPronto = true;
+        if(btnCopiar){ btnCopiar.style.display = ''; btnCopiar.disabled = false; }
       }
       iniciarPoll();
     }catch(err){
-      $('codigo-pix').textContent = 'Erro ao gerar PIX. Tente novamente.';
+      $('codigo-pix').textContent = 'Erro ao gerar o PIX — feche e tente de novo.';
+      var qe = document.getElementById('qr-fake');
+      if(qe) qe.outerHTML = '<div id="qr-fake" class="qr-carregando"><small>não foi possível gerar o QR Code</small></div>';
       toast(err.message);
     }
   }
@@ -1239,6 +1289,7 @@ function iniciarPoll(){
 }
 function pararPoll(){ if(E.pollH){ clearInterval(E.pollH); E.pollH = null; } }
 function copiarPix(){
+  if(!E.pixPronto){ toast('Aguarde — o código PIX ainda está sendo gerado'); return; }
   navigator.clipboard?.writeText($('codigo-pix').textContent)
     .then(() => toast('Código copiado '))
     .catch(() => toast('Não foi possível copiar'));
