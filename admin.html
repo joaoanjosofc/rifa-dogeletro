@@ -505,9 +505,12 @@ async function editarCampanha(id){
     '<div style="border-top:1px solid var(--line);margin:16px 0 4px;padding-top:14px"><div style="display:flex;align-items:center;justify-content:space-between"><b style="font-size:13.5px">Convite da comunidade VIP e redes sociais</b><label class="toggle"><input type="checkbox" id="ce-comunidade" '+(c.ocultar_comunidade?'':'checked')+'><span class="sl"></span></label></div>'+
       '<div class="help" style="margin:6px 0 0">Ligado: aparece o card "Faça parte da nossa comunidade VIP" e o botão de redes sociais no site. Desligado: esta rifa fica sem esse convite.</div>'+
     '</div>'+
+    '<div style="border-top:1px solid var(--line);margin:16px 0 4px;padding-top:14px"><div style="display:flex;align-items:center;justify-content:space-between"><b style="font-size:13.5px">Notificações de compras no site</b><label class="toggle"><input type="checkbox" id="ce-notif" checked><span class="sl"></span></label></div>'+
+      '<div class="help" style="margin:6px 0 0">Ligado: o site mostra avisos discretos tipo "Carlos comprou 38 números" usando as <b>compras reais</b> (só o primeiro nome + quantidade, de pedidos pagos). Desligado: nenhum aviso aparece.</div>'+
+    '</div>'+
     '<div style="display:flex;gap:10px;margin-top:18px"><button class="btn green full" onclick="salvarCampanha(\''+(id||'')+'\')"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></span> Salvar campanha</button><button class="btn ghost" onclick="fecharModal()">Cancelar</button></div>');
   renderThumbs();
-  if(id){ setTimeout(function(){ rpc('rifa_get_extras',{p_camp:id}).then(function(res){ if(!res)return; var el=$('ce-fbpixel'); if(el && !el.value && res.pixel) el.value=res.pixel; var cb=$('ce-comunidade'); if(cb) cb.checked = !res.ocultar_comunidade; }).catch(function(){}); }, 0); }
+  if(id){ setTimeout(function(){ rpc('rifa_get_extras',{p_camp:id}).then(function(res){ if(!res)return; var el=$('ce-fbpixel'); if(el && !el.value && res.pixel) el.value=res.pixel; var cb=$('ce-comunidade'); if(cb) cb.checked = !res.ocultar_comunidade; var nt=$('ce-notif'); if(nt) nt.checked = res.notif_compras !== false; }).catch(function(){}); }, 0); }
 }
 function renderThumbs(){
   const el=$('ce-thumbs'); if(!el)return;
@@ -550,7 +553,8 @@ async function salvarCampanha(id){
     const campId = id || (r && (r.id || (r.campanha && r.campanha.id))) || null;
     const px = $('ce-fbpixel') ? $('ce-fbpixel').value.trim() : '';
     const ocultar = $('ce-comunidade') ? !$('ce-comunidade').checked : false;
-    if(campId){ try{ await rpc('rifa_admin_set_extras',{p_id:campId, p_pixel:px, p_ocultar:ocultar}); }catch(_){} }
+    const notif = $('ce-notif') ? $('ce-notif').checked : true;
+    if(campId){ try{ await rpc('rifa_admin_set_extras',{p_id:campId, p_pixel:px, p_ocultar:ocultar, p_notif:notif}); }catch(_){} }
     toast('Campanha salva ','ok'); fecharModal(); viewCampanhas();
   }
   catch(e){ toast(e.message,'erro'); }

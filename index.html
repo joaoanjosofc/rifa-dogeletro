@@ -320,6 +320,49 @@ footer p.leg{font-size:11.5px;line-height:1.65;color:#84848e}
 .slide img.foto{animation:kenburns 9s ease-in-out infinite alternate}
 @keyframes kenburns{from{transform:scale(1)}to{transform:scale(1.07)}}
 .capa-info h1{text-shadow:0 2px 12px rgba(0,0,0,.5)}
+
+/* ---------- splash (carregamento sem flash) ---------- */
+#splash{position:fixed;inset:0;z-index:999;background:#0d0d10;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+body.carregando #splash{display:flex}
+body.carregando .shell{visibility:hidden}
+#splash .sp-logo{color:#fff;font-weight:800;font-size:19px;letter-spacing:.5px;display:flex;align-items:center;gap:10px;text-align:center;padding:0 20px}
+#splash .sp-logo img{max-height:46px;max-width:210px;object-fit:contain}
+#splash .sp-ring{width:34px;height:34px;border-radius:50%;border:3px solid color-mix(in srgb, var(--red) 25%, transparent);border-top-color:var(--red);animation:spgira .8s linear infinite}
+@keyframes spgira{to{transform:rotate(360deg)}}
+
+/* ---------- título mais discreto sobre a foto ---------- */
+.capa-info{padding:20px 14px 10px;background:linear-gradient(transparent, rgba(0,0,0,.5) 46%, rgba(0,0,0,.84))}
+.capa-info h1{font-size:16.5px;line-height:1.25;letter-spacing:.3px;margin-top:6px}
+.capa-info p{font-size:11px;letter-spacing:.4px;opacity:.92}
+@media (max-width:480px){ .capa-info h1{font-size:14.5px} .capa-info p{font-size:10px} }
+
+/* ---------- refinos visuais ---------- */
+.capa{box-shadow:0 16px 38px rgba(0,0,0,.45)}
+.card{box-shadow:0 6px 22px rgba(0,0,0,.15)}
+.btn-cheio{background:linear-gradient(180deg, color-mix(in srgb, var(--red), #fff 12%), var(--red) 55%, var(--red-dark));box-shadow:0 10px 24px color-mix(in srgb, var(--red) 38%, transparent), inset 0 1px 0 rgba(255,255,255,.25);transition:transform .15s ease, box-shadow .15s ease, filter .15s ease}
+.btn-cheio:hover{filter:brightness(1.04)}
+.btn-cheio:active{transform:scale(.985)}
+.pacote{transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease}
+.pacote:hover{transform:translateY(-2px)}
+.preenchido{position:relative;overflow:hidden}
+.preenchido::after{content:'';position:absolute;inset:0;background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,.35) 50%, transparent 70%);animation:brilhoBar 2.8s ease-in-out infinite}
+@keyframes brilhoBar{0%{transform:translateX(-100%)}60%,100%{transform:translateX(100%)}}
+
+/* ---------- notificações de compras (dados reais) ---------- */
+.notif-compra{position:fixed;left:14px;bottom:16px;z-index:118;display:flex;align-items:center;gap:10px;background:#fff;border-radius:13px;padding:10px 14px 10px 10px;box-shadow:0 12px 30px rgba(0,0,0,.35);max-width:275px;opacity:0;transform:translateY(14px);pointer-events:none;transition:opacity .3s ease, transform .3s ease}
+.notif-compra.ver{opacity:1;transform:translateY(0)}
+.nc-ava{width:34px;height:34px;border-radius:50%;flex:none;display:grid;place-items:center;background:color-mix(in srgb, var(--red) 14%, #fff);color:var(--red);font-weight:800;font-size:15px}
+.nc-tx{font-size:12px;color:var(--ink);line-height:1.35}
+.nc-tx small{display:block;color:var(--gray);font-size:10.5px;font-weight:600}
+
+/* ---------- ganhadores ---------- */
+.ganhador{display:flex;align-items:center;gap:11px;padding:11px 4px;border-bottom:1px solid var(--line)}
+.ganhador:last-child{border-bottom:none}
+.g-ava{width:38px;height:38px;border-radius:50%;flex:none;display:grid;place-items:center;background:linear-gradient(135deg,#f6b70e,#e08b1d);color:#fff;font-weight:800;font-size:16px}
+.g-info{flex:1;min-width:0}
+.g-info b{font-size:13.5px;color:var(--ink)}
+.g-info small{display:block;color:var(--gray);font-size:11px;font-weight:600}
+.g-premio{font-size:12.5px;font-weight:800;color:var(--green-dark);background:color-mix(in srgb, var(--green) 12%, #fff);padding:5px 10px;border-radius:999px;white-space:nowrap}
 .tag-reta{animation:pulseTag 2.4s ease-in-out infinite}
 @keyframes pulseTag{50%{box-shadow:0 3px 18px color-mix(in srgb, var(--red) 75%, transparent)}}
 
@@ -352,6 +395,25 @@ footer p.leg{font-size:11.5px;line-height:1.65;color:#84848e}
 </style>
 </head>
 <body>
+<div id="splash"><div class="sp-logo" id="sp-logo">Carregando…</div><div class="sp-ring"></div></div>
+<script>
+/* identidade visual salva: aplica ANTES do primeiro paint (sem flash vermelho de exemplo) */
+try{
+  document.body.classList.add('carregando');
+  var _c = localStorage.getItem('gp_cor');
+  if(_c) document.documentElement.style.setProperty('--red', _c);
+  var _c2 = localStorage.getItem('gp_cor2');
+  if(_c2){ document.documentElement.style.setProperty('--red-dark', _c2); document.documentElement.style.setProperty('--red-deep', _c2); }
+  var _n = localStorage.getItem('gp_nome');
+  if(_n) document.title = _n + ' · Sorteios e Prêmios';
+  var _sl = document.getElementById('sp-logo');
+  var _lg = localStorage.getItem('gp_logo');
+  if(_sl && _lg){ _sl.innerHTML = '<img src="' + _lg.replace(/"/g,'&quot;') + '" alt="">'; }
+  else if(_sl && _n){ _sl.textContent = _n; }
+  /* trava de segurança: nunca deixa a página escondida por mais de 6s */
+  setTimeout(function(){ document.body.classList.remove('carregando'); }, 6000);
+}catch(e){ try{ document.body.classList.remove('carregando'); }catch(_){} }
+</script>
 <div class="shell">
 
   <!-- ================= HEADER ================= -->
@@ -515,6 +577,18 @@ footer p.leg{font-size:11.5px;line-height:1.65;color:#84848e}
       <button class="mostrar-mais" id="btn-mais" onclick="mostrarMaisBilhetes()" style="display:none"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span> Mostrar mais</button>
     </section>
 
+    <!-- ================= GANHADORES (dados reais) ================= -->
+    <section class="card" id="sec-ganhadores" style="display:none">
+      <div class="card-cab">
+        <div class="ico" style="display:grid;place-items:center;color:#f6b70e"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12v5a6 6 0 0 1-12 0z"/><path d="M18 5h2.5a2 2 0 0 1-2.2 4"/><path d="M6 5H3.5a2 2 0 0 0 2.2 4"/><line x1="12" y1="15" x2="12" y2="18"/><path d="M8.5 21h7l-.7-3h-5.6z"/></svg></div>
+        <div>
+          <h2>Ganhadores</h2>
+          <div class="sub">Prêmios já entregues nesta campanha</div>
+        </div>
+      </div>
+      <div id="lista-ganhadores"></div>
+    </section>
+
     <!-- ================= RANKING ================= -->
     <section class="card" id="ranking">
       <div class="rank-tit" id="rank-titulo"><span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12v5a6 6 0 0 1-12 0z"/><path d="M18 5h2.5a2 2 0 0 1-2.2 4"/><path d="M6 5H3.5a2 2 0 0 0 2.2 4"/><line x1="12" y1="15" x2="12" y2="18"/><path d="M8.5 21h7l-.7-3h-5.6z"/></svg></span> Ranking <span class="icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12v5a6 6 0 0 1-12 0z"/><path d="M18 5h2.5a2 2 0 0 1-2.2 4"/><path d="M6 5H3.5a2 2 0 0 0 2.2 4"/><line x1="12" y1="15" x2="12" y2="18"/><path d="M8.5 21h7l-.7-3h-5.6z"/></svg></span></div>
@@ -548,6 +622,9 @@ footer p.leg{font-size:11.5px;line-height:1.65;color:#84848e}
   </footer>
 
 </div><!-- /shell -->
+
+  <!-- notificação de compra (dados reais, opcional por campanha) -->
+  <div class="notif-compra" id="notif-compra"></div>
 
   <!-- ================= FLUTUANTES ================= -->
   <div class="flutuantes" id="flutuantes">
@@ -784,6 +861,56 @@ function fbTrack(evento, valor, pedidoId){
   }
 }
 
+/* ---------- splash / cache de identidade ---------- */
+function prontinho(){
+  document.body.classList.remove('carregando');
+  var s = document.getElementById('splash');
+  if(s) s.style.display = 'none';
+}
+
+/* ---------- notificações de compras (pedidos pagos REAIS) ---------- */
+const NOTIF = { lista: [], i: 0, h: null };
+function iniciarNotifCompras(){
+  if(NOTIF.h || !E.online || !E.camp || !E.camp.id) return;
+  api('rifa_compras_recentes', { p_camp: E.camp.id }).then(function(l){
+    if(!Array.isArray(l) || !l.length) return;
+    NOTIF.lista = l.slice().sort(function(){ return Math.random() - .5; });
+    NOTIF.h = setTimeout(mostrarNotifCompra, 3500);
+  }).catch(function(){});
+}
+function mostrarNotifCompra(){
+  var el = $('notif-compra');
+  if(!el || !NOTIF.lista.length){ NOTIF.h = null; return; }
+  var it = NOTIF.lista[NOTIF.i % NOTIF.lista.length]; NOTIF.i++;
+  var m = Number(it.min) || 1;
+  var tempo = m < 60 ? ('há ' + m + ' min') : (m < 1440 ? ('há ' + Math.floor(m/60) + ' h') : ('há ' + Math.floor(m/1440) + ' d'));
+  el.innerHTML = '<span class="nc-ava">' + esc(String(it.nome || '?').charAt(0).toUpperCase()) + '</span>' +
+    '<span class="nc-tx"><b>' + esc(it.nome || 'Alguém') + '</b> comprou <b>' + Number(it.qtd || 0) + '</b> número' + (Number(it.qtd) > 1 ? 's' : '') +
+    '<small>' + tempo + ' · compra verificada</small></span>';
+  el.classList.add('ver');
+  setTimeout(function(){ el.classList.remove('ver'); }, 5200);
+  NOTIF.h = setTimeout(mostrarNotifCompra, 9000 + Math.random() * 9000);
+}
+function pararNotifCompras(){
+  if(NOTIF.h){ clearTimeout(NOTIF.h); NOTIF.h = null; }
+  var el = $('notif-compra'); if(el) el.classList.remove('ver');
+}
+
+/* ---------- ganhadores (dados reais do banco) ---------- */
+function renderGanhadores(lista){
+  var sec = $('sec-ganhadores');
+  if(!sec) return;
+  if(!Array.isArray(lista) || !lista.length){ sec.style.display = 'none'; return; }
+  $('lista-ganhadores').innerHTML = lista.slice(0, 10).map(function(g){
+    var premio = g.premio || (g.valor != null ? brl(Number(g.valor)) : 'Prêmio');
+    var det = g.tipo === 'roleta' ? 'Roleta premiada' : ('Bilhete premiado' + (g.numero != null ? ' · nº ' + String(g.numero).padStart(6, '0') : ''));
+    return '<div class="ganhador"><span class="g-ava">' + esc(String(g.nome || '?').charAt(0).toUpperCase()) + '</span>' +
+      '<div class="g-info"><b>' + esc(g.nome || 'Ganhador') + '</b><small>' + esc(det) + '</small></div>' +
+      '<span class="g-premio">' + esc(premio) + '</span></div>';
+  }).join('');
+  sec.style.display = '';
+}
+
 /* ---------- carregamento ---------- */
 async function carregar(silencioso){
   if(FORCAR_EXEMPLO){ E.online = false; renderHome(EXEMPLO); $('badge-offline').classList.add('ver'); return; }
@@ -792,6 +919,7 @@ async function carregar(silencioso){
     const home = await api('rifa_get_home', campId ? { p_camp: campId } : {});
     if(!home.campanha){
       E.online = true;
+      prontinho();
       $('camp-titulo').textContent = 'Nenhuma campanha ativa no momento';
       $('foot-info').innerHTML = '© 2026 <b>' + esc(home.config?.nome_site || 'RIFA PRIME') + '</b>';
       return;
@@ -803,7 +931,9 @@ async function carregar(silencioso){
     if(!silencioso){
       E.online = false;
       $('badge-offline').classList.add('ver');
-      renderHome(EXEMPLO);
+      // só mostra o modelo de exemplo se NADA foi renderizado (nem cache)
+      if(!E.camp) renderHome(EXEMPLO);
+      else prontinho();
     }
   }
 }
@@ -820,9 +950,31 @@ function renderHome(home){
 
   document.title = (cfg.nome_site || 'RIFA PRIME') + ' · Sorteios e Prêmios';
 
-  // Pixel do Facebook + preferências da campanha (convite da comunidade)
+  // guarda identidade + última home no navegador: próxima visita abre já no visual certo
+  if(E.online){
+    try{
+      if(cfg.cor_primaria) localStorage.setItem('gp_cor', cfg.cor_primaria);
+      if(cfg.cor_secundaria) localStorage.setItem('gp_cor2', cfg.cor_secundaria);
+      if(cfg.nome_site) localStorage.setItem('gp_nome', cfg.nome_site);
+      if(cfg.logo_url) localStorage.setItem('gp_logo', cfg.logo_url);
+      localStorage.setItem('gp_home', JSON.stringify(home));
+    }catch(e){}
+  }
+  prontinho();
+
+  // Pixel do Facebook + preferências da campanha (comunidade, notificações)
   if(c.fb_pixel_id) fbInit(c.fb_pixel_id);
-  if(E.online && c.id){ api('rifa_get_extras', { p_camp: c.id }).then(function(res){ if(!res) return; if(res.pixel && !FB.ready) fbInit(res.pixel); if(res.ocultar_comunidade){ var fl = $('flutuantes'); if(fl) fl.style.display = 'none'; } }).catch(function(){}); }
+  if(E.online && c.id){
+    api('rifa_get_extras', { p_camp: c.id }).then(function(res){
+      if(!res) return;
+      E.extras = res;
+      if(res.pixel && !FB.ready) fbInit(res.pixel);
+      if(res.ocultar_comunidade){ var fl = $('flutuantes'); if(fl) fl.style.display = 'none'; }
+      if(res.notif_compras === false) pararNotifCompras();
+      else iniciarNotifCompras();
+    }).catch(function(){});
+    api('rifa_ganhadores', { p_camp: c.id }).then(renderGanhadores).catch(function(){});
+  }
 
   // capa
   const tag = $('camp-tag');
@@ -998,6 +1150,11 @@ function abrirCheckoutRoleta(cotas, giros){
     cotas + ' cotas + ' + giros + ' giro' + (giros > 1 ? 's' : ''), brl(E.camp.preco_unit) + ' por cota', brl(cotas * E.camp.preco_unit));
 }
 function prepCheckout(titulo, linhaQtd, linhaUnit, total){
+  // esquenta a função de PIX em segundo plano: quando clicar em "Gerar PIX",
+  // certificado e token já estão prontos no servidor (QR sai bem mais rápido)
+  if(E.online && !E.home?.config?.demo_mode){
+    try{ fetch(EFI_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:'{"action":"warm"}' }).catch(function(){}); }catch(e){}
+  }
   $('chk-titulo').textContent = titulo;
   $('etapa-dados').style.display = '';
   $('etapa-pix').style.display = 'none';
@@ -1239,7 +1396,19 @@ async function girarRoleta(){
 
 /* ---------- init ---------- */
 renderQtd();
-carregar();
+/* boot: renderiza direto do cache (visual real na hora) e atualiza por baixo */
+(function(){
+  try{
+    if(!FORCAR_EXEMPLO){
+      var cc = localStorage.getItem('gp_home');
+      if(cc){
+        var h = JSON.parse(cc);
+        if(h && h.campanha){ E.online = true; renderHome(h); }
+      }
+    }
+  }catch(e){}
+  carregar();
+})();
 document.addEventListener('keydown', e => {
   if(e.key === 'Escape') document.querySelectorAll('.modal-veu.aberto').forEach(m => fecharModal(m.id));
 });
