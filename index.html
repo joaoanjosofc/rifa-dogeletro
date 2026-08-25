@@ -1129,8 +1129,19 @@ function premioBilheteTxt(b){
   if(b && Number(b.valor) > 0) return brl(Number(b.valor));
   return 'Prêmio especial';
 }
+/* peso de ordenação: maior prêmio primeiro; físico sem valor (ex.: MOTO 0KM) vai pro topo */
+function pesoBilhete(b){
+  var v = Number(b && b.valor) || 0;
+  var d = (b && b.descricao ? String(b.descricao).trim().toUpperCase() : '');
+  if(v <= 0 && d && d !== 'NO PIX') return 1e12; // prêmio físico destaque
+  return v;
+}
 function renderBilhetes(){
-  const bs = (E.home.bilhetes || []);
+  const bs = (E.home.bilhetes || []).slice().sort(function(a, b){
+    return (pesoBilhete(b) - pesoBilhete(a))            // maior prêmio primeiro
+      || ((a.ganhador ? 1 : 0) - (b.ganhador ? 1 : 0))  // disponíveis antes dos já ganhos
+      || String(a.numero).localeCompare(String(b.numero));
+  });
   const achados = bs.filter(b => b.ganhador).length;
   $('cont-bilhetes').textContent = achados + ' / ' + bs.length;
   $('lista-bilhetes').innerHTML = bs.slice(0, E.bilhetesVis).map(b =>
