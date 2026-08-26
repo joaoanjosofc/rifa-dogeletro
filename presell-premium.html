@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uma grande experiência está chegando</title>
+<meta name="description" content="Prepare-se para conhecer todos os detalhes da campanha que acontece em 26 de agosto. Exclusivo para maiores de 18 anos.">
+<meta property="og:title" content="Uma grande experiência está chegando">
+<meta property="og:description" content="Prepare-se para conhecer todos os detalhes da campanha que acontece em 26 de agosto.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --preto:#060907;
+  --verde:#187e51;
+  --verde-lume:#3cc98b;
+  --branco:#f2f5f3;
+  --cinza:#a3ada7;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Manrope',system-ui,sans-serif;background:var(--preto);color:var(--branco);line-height:1.6;overflow-x:hidden}
+::selection{background:rgba(60,201,139,.35)}
+.container{max-width:1060px;margin:0 auto;padding:0 22px}
+
+.eyebrow{display:inline-flex;align-items:center;gap:12px;font:600 11px 'Sora',sans-serif;letter-spacing:.34em;text-transform:uppercase;
+  background:linear-gradient(115deg,#e9edf0 0%,#98a1a8 32%,#b8f2d6 50%,#98a1a8 68%,#e9edf0 100%);
+  background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:brilho 4.5s linear infinite}
+@keyframes brilho{from{background-position:0% center}to{background-position:220% center}}
+.eyebrow::before,.eyebrow::after{content:'';height:1px;width:26px;background:linear-gradient(90deg,transparent,rgba(200,206,210,.55));flex:none}
+.eyebrow::after{background:linear-gradient(90deg,rgba(200,206,210,.55),transparent)}
+.t-grad{background:linear-gradient(180deg,#ffffff 20%,#c9d2cd 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ---------- header ---------- */
+.top{position:absolute;top:0;left:0;right:0;z-index:20}
+.top .in{max-width:1060px;margin:0 auto;padding:20px 22px;display:flex;align-items:center;justify-content:space-between}
+.brand{font:700 14px 'Sora',sans-serif;letter-spacing:.22em}
+.brand span{color:var(--verde-lume)}
+.brand img{max-height:38px;max-width:170px;object-fit:contain;display:block}
+.selo18{border:1px solid rgba(60,201,139,.5);color:var(--verde-lume);font:700 10.5px 'Sora',sans-serif;border-radius:7px;padding:4px 9px;letter-spacing:.08em;box-shadow:0 0 18px rgba(60,201,139,.15)}
+
+/* ---------- hero (única seção) ---------- */
+.hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;isolation:isolate;overflow:hidden;
+  background:
+    radial-gradient(58% 40% at 50% 82%, rgba(60,201,139,.34), transparent 70%),
+    radial-gradient(90% 55% at 50% -5%, rgba(255,255,255,.06), transparent 60%),
+    linear-gradient(180deg,#0a120d,#060907 62%)}
+.hero-img{position:absolute;inset:0;z-index:-2;overflow:hidden;display:none}
+.hero-img img{width:100%;height:100%;object-fit:cover;object-position:center}
+.hero.tem-foto .hero-img{display:block}
+.hero-veu{position:absolute;inset:0;z-index:-1;
+  background:
+    radial-gradient(52% 34% at 50% 86%, rgba(60,201,139,.28), transparent 72%),
+    linear-gradient(180deg, rgba(6,9,7,.62) 0%, rgba(6,9,7,.20) 40%, rgba(6,9,7,.86) 74%, #060907 96%)}
+.horizonte{position:absolute;left:8%;right:8%;top:70%;height:1px;z-index:-1;
+  background:linear-gradient(90deg,transparent,rgba(215,222,226,.5) 30%,rgba(215,222,226,.5) 70%,transparent)}
+.horizonte::after{content:'';position:absolute;left:20%;right:20%;top:1px;height:70px;
+  background:radial-gradient(50% 100% at 50% 0%, rgba(60,201,139,.30), transparent 75%);
+  animation:respira 4.5s ease-in-out infinite alternate}
+.hero.tem-foto .horizonte{display:none}
+@keyframes respira{from{opacity:.55;transform:scale(.97)}to{opacity:1;transform:scale(1.04)}}
+.fio{position:absolute;top:0;left:0;right:0;height:2px;z-index:6;opacity:.9;
+  background:linear-gradient(90deg,transparent 20%,var(--verde-lume) 50%,transparent 80%);
+  background-size:220% 100%;animation:fio 4.5s linear infinite}
+@keyframes fio{from{background-position:150% 0}to{background-position:-150% 0}}
+.orb{position:absolute;border-radius:50%;filter:blur(64px);z-index:-1;pointer-events:none}
+.o1{width:min(72vw,430px);height:min(72vw,430px);left:-14%;top:14%;opacity:.55;
+  background:radial-gradient(circle,rgba(60,201,139,.55),transparent 68%);animation:deriva1 10s ease-in-out infinite alternate}
+.o2{width:min(84vw,560px);height:min(84vw,560px);right:-18%;bottom:-10%;opacity:.6;
+  background:radial-gradient(circle,rgba(24,126,81,.62),transparent 68%);animation:deriva2 13s ease-in-out infinite alternate}
+@keyframes deriva1{to{transform:translate(46px,34px) scale(1.18)}}
+@keyframes deriva2{to{transform:translate(-54px,-42px) scale(1.12)}}
+.hero.tem-foto .orb{opacity:.32;mix-blend-mode:screen}
+.hero.tem-foto .hero-img img{animation:kb 22s ease-in-out infinite alternate}
+@keyframes kb{from{transform:scale(1)}to{transform:scale(1.09)}}
+
+.hero .conteudo{position:relative;width:100%;padding-top:120px;padding-bottom:44px}
+.hero h1{font:700 clamp(32px,7.2vw,60px)/1.12 'Sora',sans-serif;letter-spacing:.01em;max-width:15ch;margin:18px 0 16px;text-wrap:balance}
+.hero .lead{color:var(--cinza);font-size:clamp(14.5px,2.6vw,17px);font-weight:500;max-width:46ch;margin-bottom:34px}
+.hero .lead b{color:var(--branco);font-weight:700}
+.legal{margin-top:22px;font-size:10.5px;font-weight:500;color:rgba(163,173,167,.75);letter-spacing:.02em}
+
+/* entrada */
+.hr-a{opacity:0;transform:translateY(24px);animation:entra .9s cubic-bezier(.2,.7,.2,1) forwards}
+.hr-a.d1{animation-delay:.12s}.hr-a.d2{animation-delay:.26s}.hr-a.d3{animation-delay:.42s}
+@keyframes entra{to{opacity:1;transform:none}}
+
+/* ---------- botão ---------- */
+.btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:12px;
+  background:linear-gradient(140deg,#27b979 0%,#0f5232 92%);color:var(--branco);
+  border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:18px 32px;
+  font:600 13px 'Sora',sans-serif;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;
+  transition:transform .22s ease;animation:pulsa 2.8s ease-in-out infinite}
+@keyframes pulsa{
+  0%,100%{box-shadow:0 14px 38px rgba(39,185,121,.38), inset 0 1px 0 rgba(255,255,255,.16)}
+  50%{box-shadow:0 18px 58px rgba(39,185,121,.65), inset 0 1px 0 rgba(255,255,255,.22)}}
+.btn svg{flex:none;transition:transform .22s ease}
+.btn:hover{transform:translateY(-2px)}
+.btn:hover svg{transform:translateX(4px)}
+.btn:active{transform:translateY(0) scale(.99)}
+.btn::after{content:'';position:absolute;top:0;left:-70%;width:50%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.24),transparent);transform:skewX(-18deg);
+  animation:varre 3.6s ease-in-out infinite}
+@keyframes varre{0%,55%{left:-70%}85%,100%{left:150%}}
+
+@media (min-width:760px){
+  .hero .conteudo{padding-top:150px;padding-bottom:54px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .hr-a{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="in">
+    <div class="brand" id="pp-brand">GREEN <span>PRÊMIOS</span></div>
+    <div class="selo18">+18</div>
+  </div>
+</header>
+
+<section class="hero" id="hero">
+  <div class="fio" aria-hidden="true"></div>
+  <div class="hero-img" aria-hidden="true"><img id="pp-hero-img" alt=""></div>
+  <div class="hero-veu" aria-hidden="true"></div>
+  <div class="horizonte" aria-hidden="true"></div>
+  <div class="orb o1" aria-hidden="true"></div>
+  <div class="orb o2" aria-hidden="true"></div>
+  <div class="container conteudo">
+    <span class="eyebrow hr-a">Green Prêmios apresenta</span>
+    <h1 class="t-grad hr-a d1">Uma grande experiência está chegando</h1>
+    <p class="lead hr-a d2">Prepare-se para conhecer todos os detalhes da campanha que acontece em <b>26 de agosto</b>.</p>
+    <div class="hr-a d3">
+      <a class="btn cta-oficial" id="cta-hero" href="/">Conhecer a campanha
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <div class="legal">Participação exclusiva para maiores de 18 anos · Campanha com regulamento na página oficial.</div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  /* ================== CONFIGURAÇÃO — edite aqui ================== */
+  var CONFIG = {
+    LINK_OFICIAL: '/',   // página oficial da campanha (UTM/fbclid são repassados sozinhos)
+    CAMP_ID: '',         // opcional: id da campanha (vazio = campanha ativa)
+    IMG_HERO: ''         // foto de fundo do topo (vazio = usa a 1ª imagem da campanha)
+  };
+  /* =============================================================== */
+
+  var SUPA = 'https://esnoqlxzgeczfskzuoyw.supabase.co';
+  var KEY = 'sb_publishable_YR8HX-qGEauW1r_cj7_LIQ_59kSSRxh';
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+  /* ---- link oficial preservando UTM / fbclid ---- */
+  var qs = new URLSearchParams(location.search);
+  function linkOficial(campId){
+    var base = CONFIG.LINK_OFICIAL || '/';
+    var sep = base.indexOf('?') > -1 ? '&' : '?';
+    var p = new URLSearchParams();
+    qs.forEach(function(v, k){ p.set(k, v); });
+    if(campId && !p.has('c')) p.set('c', campId);
+    var s = p.toString();
+    return s ? (base + sep + s) : base;
+  }
+  function setCtas(campId){
+    var l = linkOficial(campId);
+    var els = document.querySelectorAll('.cta-oficial');
+    for(var i = 0; i < els.length; i++){ els[i].href = l; }
+  }
+  setCtas(null);
+
+  /* ---- Pixel ---- */
+  var FBOK = false;
+  function fbInit(id){
+    if(FBOK || !id) return;
+    try{
+      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+      (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', String(id)); fbq('track', 'PageView'); FBOK = true;
+    }catch(e){}
+  }
+  document.addEventListener('click', function(ev){
+    var a = ev.target && ev.target.closest ? ev.target.closest('.cta-oficial') : null;
+    if(a && FBOK){ try{ fbq('trackCustom', 'PresellClick'); }catch(e){} }
+  });
+
+  /* ---- imagem do hero ---- */
+  function poeHero(url){
+    if(!url) return;
+    var hi = $('pp-hero-img');
+    hi.onload = function(){ $('hero').classList.add('tem-foto'); };
+    hi.src = url;
+  }
+  poeHero(CONFIG.IMG_HERO);
+
+  /* ---- dados da campanha (imagem, pixel, marca) ---- */
+  function api(fn, args){
+    return fetch(SUPA + '/rest/v1/rpc/' + fn, { method:'POST', headers:{ 'apikey':KEY, 'Authorization':'Bearer '+KEY, 'Content-Type':'application/json' }, body: JSON.stringify(args||{}) }).then(function(r){ if(!r.ok) throw 0; return r.json(); });
+  }
+  var campId = CONFIG.CAMP_ID || qs.get('c');
+  api('rifa_get_home', campId ? { p_camp: campId } : {}).then(function(h){
+    var c = h && h.campanha, cfg = (h && h.config) || {};
+    if(cfg.logo_url){ $('pp-brand').innerHTML = '<img src="'+esc(cfg.logo_url)+'" alt="'+esc(cfg.nome_site||'')+'">'; }
+    if(!c) return;
+    setCtas(c.id);
+    if(!CONFIG.IMG_HERO && Array.isArray(c.imagens) && c.imagens[0]){ poeHero(c.imagens[0]); }
+    if(c.fb_pixel_id) fbInit(c.fb_pixel_id);
+    else if(c.id){ api('rifa_get_extras', { p_camp: c.id }).then(function(x){ if(x && x.pixel) fbInit(x.pixel); }).catch(function(){}); }
+  }).catch(function(){ /* sem rede/campanha: a página segue com o visual padrão */ });
+})();
+</script>
+</body>
+</html>
